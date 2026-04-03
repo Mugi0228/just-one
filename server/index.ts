@@ -37,7 +37,7 @@ if (IS_PRODUCTION) {
   app.use(express.static(distPath));
 
   // SPA フォールバック
-  app.get('*', (_req, res) => {
+  app.get('/{*path}', (_req, res) => {
     res.sendFile(join(distPath, 'index.html'));
   });
 }
