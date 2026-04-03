@@ -33,7 +33,7 @@ app.get('/healthz', (_req, res) => {
 
 // 本番時: ビルド済み静的ファイルを配信
 if (IS_PRODUCTION) {
-  const distPath = join(__dirname, '..', 'dist');
+  const distPath = join(__dirname, '../..', 'dist');
   app.use(express.static(distPath));
 
   // SPA フォールバック
