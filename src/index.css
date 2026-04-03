@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg: #F5F5F0;
+  --color-card: #FFFFFF;
+  --color-primary: #7C3AED;
+  --color-primary-dark: #6D28D9;
+  --color-success: #22C55E;
+  --color-error: #EF4444;
+  --color-warning: #F59E0B;
+  --color-cyan: #06B6D4;
+  --color-pink: #EC4899;
+}
+
+body {
+  @apply bg-[var(--color-bg)] text-gray-800 antialiased;
+  font-family: 'Nunito', sans-serif;
+}
+
+/* Duolingo-style 3D button effect */
+.btn-3d {
+  position: relative;
+  transform: translateY(0);
+  transition: transform 0.1s ease;
+}
+.btn-3d:active {
+  transform: translateY(3px);
+}
+.btn-3d::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 0 0 1rem 1rem;
+  transition: height 0.1s ease;
+}
+.btn-3d:active::after {
+  height: 1px;
+  bottom: -1px;
+}
+
+/* Bounce animation */
+@keyframes bounce-in {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-bounce-in {
+  animation: bounce-in 0.4s ease-out;
+}
+
+/* Confetti animation for celebrations */
+@keyframes confetti-fall {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100px) rotate(720deg); opacity: 0; }
+}
+
+/* Wiggle animation */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out;
+}
+
+/* Pulse animation for urgent timer */
+@keyframes pulse-urgent {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.animate-pulse-urgent {
+  animation: pulse-urgent 0.8s ease-in-out infinite;
+}
