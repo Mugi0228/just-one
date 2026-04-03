@@ -1,5 +1,6 @@
 import { useGameState } from '@/contexts/GameContext';
 import { ScoreBoard } from '@/components/game/ScoreBoard';
+import { PhaseTransition } from '@/components/ui/PhaseTransition';
 import { TopicReveal } from '@/pages/player/phases/TopicReveal';
 import { HintWriting } from '@/pages/player/phases/HintWriting';
 import { HintChecking } from '@/pages/player/phases/HintChecking';
@@ -25,8 +26,10 @@ export function GamePage() {
         <ScoreBoard results={state.roundResults} />
       </div>
 
-      {/* Phase content */}
-      <PhaseContent phase={state.phase} />
+      {/* Phase content with transition */}
+      <PhaseTransition phaseKey={`${state.currentRound}-${state.phase}`}>
+        <PhaseContent phase={state.phase} />
+      </PhaseTransition>
     </div>
   );
 }

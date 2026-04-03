@@ -9,7 +9,7 @@ import {
   updatePlayerConnection,
   updateSession,
 } from '../game/session-manager.js';
-import { submitHint, submitAnswer, getTimerRemaining } from '../game/game-engine.js';
+import { submitHint, submitAnswer, getTimerRemaining, buildFinalResults } from '../game/game-engine.js';
 import { validatePlayerName, validateHint, validateAnswer } from '../utils/validation.js';
 import { nanoid } from 'nanoid';
 import { hostSessionMap } from './host-handlers.js';
@@ -272,7 +272,7 @@ export const registerPlayerHandlers = (
       topic,
       timeRemaining: getTimerRemaining(sessionCode),
       roundResults,
-      finalResults: [],
+      finalResults: updatedSession.phase === 'FINAL_RESULT' ? buildFinalResults(updatedSession) : [],
       teamRoundInfos,
       hints,
     });

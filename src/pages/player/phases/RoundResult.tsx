@@ -1,10 +1,23 @@
+import { useEffect } from 'react';
 import { useGameState } from '@/contexts/GameContext';
 import { socket } from '@/lib/socket';
+import { hapticSuccess, hapticError } from '@/lib/haptics';
 
 export function RoundResult() {
   const { state } = useGameState();
-
   const needsBottomPadding = state.isHost && state.progressionMode === 'manual';
+
+  // Haptic feedback based on results for this player's team
+  useEffect(() => {
+    if (!state.myTeam) return;
+    const myResult = state.roundResults.find((r) => r.teamId === state.myTeam?.id);
+    if (!myResult) return;
+    if (myResult.isCorrect) {
+      hapticSuccess();
+    } else {
+      hapticError();
+    }
+  }, [state.currentRound]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className={`flex flex-col gap-4 ${needsBottomPadding ? 'pb-20' : ''}`}>

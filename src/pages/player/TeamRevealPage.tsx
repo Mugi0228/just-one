@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { socket } from '@/lib/socket';
 import { useGameState } from '@/contexts/GameContext';
+import { hapticLight } from '@/lib/haptics';
 import type { Team, Player } from '@shared/types/game';
 
 const TEAM_ACCENT_COLORS = [
@@ -29,6 +30,73 @@ const AVATAR_COLORS = [
 function getAvatarColor(index: number): string {
   return AVATAR_COLORS[index % AVATAR_COLORS.length];
 }
+
+// ---------------------------------------------------------------------------
+// Touch DnD — module-level state (no React re-renders during drag move)
+// ---------------------------------------------------------------------------
+
+let _ghostEl: HTMLDivElement | null = null;
+let _activeDragPlayerId: string | null = null;
+let _highlightedTeamEl: Element | null = null;
+
+function createDragGhost(label: string, x: number, y: number): HTMLDivElement {
+  const el = document.createElement('div');
+  el.style.cssText = [
+    'position:fixed',
+    'pointer-events:none',
+    'z-index:9999',
+    'background:white',
+    'border:2px solid #7C3AED',
+    'border-radius:0.75rem',
+    'padding:0.375rem 0.875rem',
+    'font-weight:700',
+    'font-size:0.875rem',
+    'line-height:1.5',
+    'color:#374151',
+    'box-shadow:0 8px 24px rgba(0,0,0,0.25)',
+    'transform:translate(-50%,-60%) scale(1.08)',
+    'white-space:nowrap',
+    'transition:none',
+  ].join(';');
+  el.textContent = label;
+  el.style.left = `${x}px`;
+  el.style.top = `${y}px`;
+  document.body.appendChild(el);
+  return el;
+}
+
+function getTeamIdAtPoint(x: number, y: number): string | null {
+  // Temporarily hide ghost so elementFromPoint sees what's beneath
+  if (_ghostEl) _ghostEl.style.visibility = 'hidden';
+  const el = document.elementFromPoint(x, y);
+  if (_ghostEl) _ghostEl.style.visibility = '';
+  return el?.closest('[data-team-id]')?.getAttribute('data-team-id') ?? null;
+}
+
+function setDropHighlight(teamId: string | null): void {
+  if (_highlightedTeamEl) {
+    _highlightedTeamEl.classList.remove('touch-drag-over');
+    _highlightedTeamEl = null;
+  }
+  if (teamId) {
+    const el = document.querySelector(`[data-team-id="${teamId}"]`);
+    if (el) {
+      el.classList.add('touch-drag-over');
+      _highlightedTeamEl = el;
+    }
+  }
+}
+
+function cleanupDrag(): void {
+  _ghostEl?.remove();
+  _ghostEl = null;
+  setDropHighlight(null);
+  _activeDragPlayerId = null;
+}
+
+// ---------------------------------------------------------------------------
+// TeamRevealPage
+// ---------------------------------------------------------------------------
 
 export function TeamRevealPage() {
   const { state } = useGameState();
@@ -100,6 +168,7 @@ function DraggableTeamCard({
     .map((id) => players.find((p) => p.id === id))
     .filter(Boolean) as Player[];
 
+  // Desktop DnD handlers
   function handleDragOver(e: React.DragEvent) {
     if (!isHost) return;
     e.preventDefault();
@@ -114,15 +183,14 @@ function DraggableTeamCard({
     if (!isHost) return;
     e.preventDefault();
     setIsDragOver(false);
-
     const playerId = e.dataTransfer.getData('text/plain');
     if (!playerId) return;
-
     socket.emit('host:move-player', { playerId, toTeamId: team.id });
   }
 
   return (
     <div
+      data-team-id={team.id}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -152,7 +220,7 @@ function DraggableTeamCard({
 }
 
 // ---------------------------------------------------------------------------
-// Player Chip (draggable)
+// Player Chip (draggable — desktop + touch)
 // ---------------------------------------------------------------------------
 
 interface PlayerChipProps {
@@ -169,6 +237,8 @@ function PlayerChip({ player, playerIndex, draggable, isMe, isHost, currentTeamI
   const [isDragging, setIsDragging] = useState(false);
   const [showMoveMenu, setShowMoveMenu] = useState(false);
 
+  // ---- Desktop DnD ----
+
   function handleDragStart(e: React.DragEvent) {
     e.dataTransfer.setData('text/plain', player.id);
     e.dataTransfer.effectAllowed = 'move';
@@ -178,6 +248,51 @@ function PlayerChip({ player, playerIndex, draggable, isMe, isHost, currentTeamI
   function handleDragEnd() {
     setIsDragging(false);
   }
+
+  // ---- Touch DnD ----
+
+  function handleTouchStart(e: React.TouchEvent) {
+    if (!draggable) return;
+    // Close any open move menu
+    setShowMoveMenu(false);
+    const touch = e.touches[0];
+    _activeDragPlayerId = player.id;
+    _ghostEl = createDragGhost(player.name, touch.clientX, touch.clientY);
+    hapticLight();
+    setIsDragging(true);
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    if (!_ghostEl || _activeDragPlayerId !== player.id) return;
+    const touch = e.touches[0];
+    _ghostEl.style.left = `${touch.clientX}px`;
+    _ghostEl.style.top = `${touch.clientY}px`;
+
+    const targetId = getTeamIdAtPoint(touch.clientX, touch.clientY);
+    setDropHighlight(targetId !== currentTeamId ? targetId : null);
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (!_ghostEl || _activeDragPlayerId !== player.id) return;
+    const touch = e.changedTouches[0];
+    const targetId = getTeamIdAtPoint(touch.clientX, touch.clientY);
+
+    cleanupDrag();
+    setIsDragging(false);
+
+    if (targetId && targetId !== currentTeamId) {
+      socket.emit('host:move-player', { playerId: player.id, toTeamId: targetId });
+      hapticLight();
+    }
+  }
+
+  function handleTouchCancel() {
+    if (_activeDragPlayerId !== player.id) return;
+    cleanupDrag();
+    setIsDragging(false);
+  }
+
+  // ---- Move menu (button fallback) ----
 
   function handleMoveToTeam(toTeamId: string) {
     socket.emit('host:move-player', { playerId: player.id, toTeamId });
@@ -192,11 +307,15 @@ function PlayerChip({ player, playerIndex, draggable, isMe, isHost, currentTeamI
         draggable={draggable}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
+        onTouchStart={draggable ? handleTouchStart : undefined}
+        onTouchMove={draggable ? handleTouchMove : undefined}
+        onTouchEnd={draggable ? handleTouchEnd : undefined}
+        onTouchCancel={draggable ? handleTouchCancel : undefined}
         className={`
           flex items-center gap-2 rounded-xl px-3 py-1.5
           bg-white shadow-sm border-2
           ${isMe ? 'border-[var(--color-primary)] bg-purple-50' : 'border-gray-100'}
-          ${draggable ? 'cursor-grab active:cursor-grabbing hover:scale-105 hover:shadow-md' : ''}
+          ${draggable ? 'cursor-grab active:cursor-grabbing hover:scale-105 hover:shadow-md touch-none' : ''}
           ${isDragging ? 'opacity-40' : ''}
           transition-all duration-150
         `}
@@ -216,7 +335,7 @@ function PlayerChip({ player, playerIndex, draggable, isMe, isHost, currentTeamI
               e.stopPropagation();
               setShowMoveMenu(!showMoveMenu);
             }}
-            className="ml-1 w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-xs text-gray-500 transition-colors"
+            className="ml-1 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 active:bg-gray-300 flex items-center justify-center text-sm text-gray-500 transition-colors touch-manipulation"
             title="チームを移動"
           >
             ↔
@@ -226,12 +345,12 @@ function PlayerChip({ player, playerIndex, draggable, isMe, isHost, currentTeamI
 
       {/* Move popover */}
       {showMoveMenu && (
-        <div className="absolute top-full left-0 mt-1 z-20 bg-white rounded-xl shadow-lg border border-gray-200 py-1 min-w-[8rem]">
+        <div className="absolute top-full left-0 mt-1 z-20 bg-white rounded-xl shadow-lg border border-gray-200 py-1 min-w-[9rem]">
           {otherTeams.map((t) => (
             <button
               key={t.id}
               onClick={() => handleMoveToTeam(t.id)}
-              className="w-full text-left px-3 py-2 text-sm font-bold text-gray-700 hover:bg-purple-50 hover:text-[var(--color-primary)] transition-colors"
+              className="w-full text-left px-4 py-3 text-sm font-bold text-gray-700 hover:bg-purple-50 hover:text-[var(--color-primary)] active:bg-purple-100 transition-colors touch-manipulation"
             >
               {t.name}
             </button>

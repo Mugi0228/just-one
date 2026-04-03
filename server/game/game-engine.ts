@@ -625,73 +625,66 @@ export const proceedToNextRound = (io: AppServer, sessionCode: string): void => 
   }
 };
 
-const showFinalResult = (io: AppServer, sessionCode: string): void => {
-  const session = getSession(sessionCode);
-  if (!session) return;
-
-  changePhase(io, sessionCode, 'FINAL_RESULT', 0);
-
-  // チームのスコアでランキングを計算
+/**
+ * セッションの最終結果ランキングを組み立てる。
+ * showFinalResult と player:rejoin の両方で使用する。
+ */
+export const buildFinalResults = (session: GameSession): TeamFinalResult[] => {
   const teamScores = session.teams.map((team) => ({
     teamId: team.id,
     teamName: team.name,
     totalScore: session.totalScores.get(team.id) ?? 0,
   }));
 
-  // スコア降順ソート
   const sorted = [...teamScores].sort((a, b) => b.totalScore - a.totalScore);
 
-  // ランク付け（同点は同順位）
   const rankings: TeamFinalResult[] = sorted.map((entry, index) => {
     const rank =
       index > 0 && sorted[index - 1].totalScore === entry.totalScore
         ? (rankings[index - 1]?.rank ?? index + 1)
         : index + 1;
 
-    // そのチームの全ラウンド結果を構築
-    const roundResults: TeamRoundResult[] = session.roundHistory.map(
-      (roundStates) => {
-        const trs = roundStates.find((s) => s.teamId === entry.teamId);
-        if (!trs) {
-          return {
-            teamId: entry.teamId,
-            teamName: entry.teamName,
-            topic: '',
-            guesserName: '',
-            answer: null,
-            isCorrect: false,
-            allHintsUnique: false,
-            score: 0,
-            totalScore: 0,
-            hints: [],
-          };
-        }
-
-        const guesser = session.players.find((p) => p.id === trs.guesserId);
-        const hints: readonly RevealedHint[] = trs.checkedHints.map((h) => {
-          const player = session.players.find((p) => p.id === h.playerId);
-          return {
-            playerId: h.playerId,
-            playerName: player?.name ?? 'Unknown',
-            text: h.text,
-            isDuplicate: h.isDuplicate,
-          };
-        });
-
+    const roundResults: TeamRoundResult[] = session.roundHistory.map((roundStates) => {
+      const trs = roundStates.find((s) => s.teamId === entry.teamId);
+      if (!trs) {
         return {
-          teamId: trs.teamId,
+          teamId: entry.teamId,
           teamName: entry.teamName,
-          topic: trs.topic,
-          guesserName: guesser?.name ?? 'Unknown',
-          answer: trs.answer,
-          isCorrect: trs.score > 0,
-          allHintsUnique: trs.checkedHints.every((h) => !h.isDuplicate),
-          score: trs.score,
-          totalScore: 0, // 個別ラウンドの累計は使わない
-          hints,
+          topic: '',
+          guesserName: '',
+          answer: null,
+          isCorrect: false,
+          allHintsUnique: false,
+          score: 0,
+          totalScore: 0,
+          hints: [],
         };
-      },
-    );
+      }
+
+      const guesser = session.players.find((p) => p.id === trs.guesserId);
+      const hints: readonly RevealedHint[] = trs.checkedHints.map((h) => {
+        const player = session.players.find((p) => p.id === h.playerId);
+        return {
+          playerId: h.playerId,
+          playerName: player?.name ?? 'Unknown',
+          text: h.text,
+          isDuplicate: h.isDuplicate,
+        };
+      });
+
+      return {
+        teamId: trs.teamId,
+        teamName: entry.teamName,
+        topic: trs.topic,
+        guesserName: guesser?.name ?? 'Unknown',
+        answer: trs.answer,
+        isCorrect: trs.score > 0,
+        allHintsUnique: trs.checkedHints.every((h) => !h.isDuplicate),
+        score: trs.score,
+        totalScore: 0,
+        hints,
+      };
+    });
 
     return {
       teamId: entry.teamId,
@@ -702,6 +695,16 @@ const showFinalResult = (io: AppServer, sessionCode: string): void => {
     };
   });
 
+  return rankings;
+};
+
+const showFinalResult = (io: AppServer, sessionCode: string): void => {
+  const session = getSession(sessionCode);
+  if (!session) return;
+
+  changePhase(io, sessionCode, 'FINAL_RESULT', 0);
+
+  const rankings = buildFinalResults(session);
   io.to(sessionCode).emit('game:final-result', { rankings });
 };
 

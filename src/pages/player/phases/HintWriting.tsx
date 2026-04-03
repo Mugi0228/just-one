@@ -5,6 +5,7 @@ import { Timer } from '@/components/ui/Timer';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { GAME_CONFIG } from '@shared/constants/game-config';
+import { hapticSuccess } from '@/lib/haptics';
 
 export function HintWriting() {
   const { state } = useGameState();
@@ -16,6 +17,7 @@ export function HintWriting() {
   function handleSubmit() {
     if (hint.trim().length === 0 || submitted) return;
     socket.emit('player:submit-hint', { hint: hint.trim() });
+    hapticSuccess();
     setSubmitted(true);
   }
 

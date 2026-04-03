@@ -1,6 +1,8 @@
+import { useEffect, useRef } from 'react';
 import { useGameState } from '@/contexts/GameContext';
 import { socket } from '@/lib/socket';
 import { Button } from '@/components/ui/Button';
+import { hapticHeavy } from '@/lib/haptics';
 
 const RANK_EMOJI: Record<number, string> = {
   1: '🏆',
@@ -20,25 +22,64 @@ const RANK_TEXT_STYLES: Record<number, string> = {
   3: 'text-2xl text-orange-400',
 };
 
+const CONFETTI_COLORS = ['#7C3AED', '#06B6D4', '#EC4899', '#F59E0B', '#22C55E', '#EF4444'];
+
+function launchConfetti(container: HTMLElement) {
+  const count = 60;
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    const color = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+    const left = Math.random() * 100;
+    const duration = 1.5 + Math.random() * 2;
+    const delay = Math.random() * 0.8;
+    el.style.cssText = `
+      left: ${left}%;
+      top: -20px;
+      background: ${color};
+      animation-duration: ${duration}s;
+      animation-delay: ${delay}s;
+      width: ${6 + Math.random() * 8}px;
+      height: ${6 + Math.random() * 8}px;
+      border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+    `;
+    container.appendChild(el);
+    // Clean up after animation
+    setTimeout(() => el.remove(), (duration + delay + 0.5) * 1000);
+  }
+}
+
 export function FinalResultPage() {
   const { state } = useGameState();
   const sorted = [...state.finalResults].sort((a, b) => a.rank - b.rank);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const firedRef = useRef(false);
+
+  useEffect(() => {
+    if (firedRef.current) return;
+    firedRef.current = true;
+
+    hapticHeavy();
+    if (containerRef.current) {
+      launchConfetti(containerRef.current);
+    }
+  }, []);
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="text-center animate-bounce-in">
+    <div ref={containerRef} className="flex flex-col gap-6">
+      <div className="text-center animate-scale-pop">
         <h2 className="text-3xl font-extrabold text-gray-800">🎊 最終結果</h2>
       </div>
 
       {/* Rankings */}
       <div className="flex flex-col gap-4">
-        {sorted.map((team) => (
+        {sorted.map((team, index) => (
           <div
             key={team.teamId}
             className={`
               rounded-2xl p-5
+              animate-phase-enter stagger-${Math.min(index + 1, 6)}
               ${RANK_CARD_STYLES[team.rank] ?? 'bg-white shadow-md border-2 border-gray-100'}
-              ${team.rank === 1 ? 'animate-bounce-in' : ''}
             `}
           >
             <div className="flex items-center gap-4">

@@ -50,13 +50,10 @@ shared/        Types shared between client and server
 - **Design system:** Duolingo-inspired — Nunito font, CSS custom properties defined in `src/index.css`
 - **Socket events:** All event names and payloads typed in `shared/types/events.ts`. Add new events there first.
 - **TypeScript strict mode** is enabled; avoid `any`.
+- **PWA:** `vite-plugin-pwa` (generateSW mode). App shell cached; Socket.io excluded from SW. Icons in `public/`.
 
 ## Known Issues
 
 - No auth on host-only socket events (any client can trigger host actions)
-- No reconnection or session recovery after disconnect
-- Mobile drag-and-drop not supported (touch events not handled)
-- Guesser can see topic card during `TOPIC_REVEAL` phase (information leak)
-- Hiragana/Katakana duplicate detection gap (normalized comparison incomplete)
-- Topic pool too small (~75 words); repetition occurs in long sessions
-- `HINT_CHECKING` phase timeout is 5 s — too short for larger groups
+- Reconnection implemented (`player:rejoin` + localStorage token, `reconnectionAttempts: 10`) but host session destroyed after 60-second disconnect timeout; no persistence across server restarts. Token is cleared on `SESSION_NOT_FOUND` / `PLAYER_NOT_FOUND` / `INVALID_TOKEN` errors to prevent retry loops.
+- Mobile drag-and-drop: touch DnD implemented via `touchstart/touchmove/touchend` + `elementFromPoint` ghost element. Desktop HTML5 DragEvent also retained. Button fallback (↔) remains available.

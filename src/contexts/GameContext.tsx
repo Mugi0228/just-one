@@ -100,7 +100,7 @@ type GameAction =
   | { type: 'SET_PROGRESSION_MODE'; progressionMode: ProgressionMode }
   | { type: 'GAME_RESET'; players: readonly Player[] }
   | { type: 'STATE_SYNC'; payload: GameState }
-  | { type: 'ERROR'; message: string }
+  | { type: 'ERROR'; code?: string; message: string }
   | { type: 'CLEAR_ERROR' };
 
 // ---------------------------------------------------------------------------
@@ -241,8 +241,14 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return { ...action.payload };
 
     case 'ERROR': {
-      // On host disconnect, clear session storage so we don't try to rejoin
-      if (action.message.includes('ホストが切断')) {
+      // Clear session token when the session no longer exists or player is gone,
+      // so the next reconnect doesn't loop on an invalid token.
+      if (
+        action.code === 'SESSION_NOT_FOUND' ||
+        action.code === 'PLAYER_NOT_FOUND' ||
+        action.code === 'INVALID_TOKEN' ||
+        action.message.includes('ホストが切断')
+      ) {
         localStorage.removeItem('just-one-token');
         localStorage.removeItem('just-one-session');
       }
@@ -412,8 +418,8 @@ export function GameProvider({ children }: GameProviderProps) {
       }));
     });
 
-    s.on('error', ({ message }) => {
-      dispatch({ type: 'ERROR', message });
+    s.on('error', ({ code, message }) => {
+      dispatch({ type: 'ERROR', code, message });
     });
 
     return () => {

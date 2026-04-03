@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useConnectionStatus } from '@/hooks/useConnectionStatus';
 
 interface PlayerLayoutProps {
@@ -7,10 +7,32 @@ interface PlayerLayoutProps {
 
 function ConnectionIndicator() {
   const status = useConnectionStatus();
+  // Track how long we've been disconnected to distinguish cold-start from runtime disconnect
+  const [disconnectedMs, setDisconnectedMs] = useState(0);
+
+  useEffect(() => {
+    if (status === 'connected') {
+      setDisconnectedMs(0);
+      return;
+    }
+    const start = Date.now();
+    const id = setInterval(() => setDisconnectedMs(Date.now() - start), 500);
+    return () => clearInterval(id);
+  }, [status]);
 
   if (status === 'connected') return null;
 
   const isReconnecting = status === 'reconnecting';
+  const isColdStart = disconnectedMs < 15_000; // within first 15s = likely cold start
+
+  if (isColdStart && !isReconnecting) {
+    return (
+      <div className="relative z-20 text-center text-sm font-bold py-3 px-4 bg-purple-100 text-purple-700 flex items-center justify-center gap-2">
+        <span className="animate-spin inline-block">⏳</span>
+        サーバー起動中です（初回は少しお待ちください）
+      </div>
+    );
+  }
 
   return (
     <div
@@ -27,7 +49,10 @@ function ConnectionIndicator() {
 
 export function PlayerLayout({ children }: PlayerLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--color-bg)] relative overflow-hidden">
+    <div
+      className="min-h-screen flex flex-col bg-[var(--color-bg)] relative overflow-hidden"
+      style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
+    >
       {/* Decorative gradient blobs (全ページ共通) */}
       <div className="pointer-events-none fixed inset-0 z-0">
         <div className="absolute -top-32 -left-32 w-[28rem] h-[28rem] bg-purple-400 rounded-full opacity-40 blur-[80px]" />
@@ -36,7 +61,10 @@ export function PlayerLayout({ children }: PlayerLayoutProps) {
         <div className="absolute -bottom-24 right-1/4 w-[26rem] h-[26rem] bg-purple-300 rounded-full opacity-30 blur-[80px]" />
       </div>
 
-      <header className="relative z-10 bg-white/80 backdrop-blur-sm shadow-md px-4 py-3">
+      <header
+        className="relative z-10 bg-white/80 backdrop-blur-sm shadow-md px-4 py-3"
+        style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}
+      >
         <h1 className="text-center text-2xl font-extrabold text-[var(--color-primary)]">
           Just One
         </h1>

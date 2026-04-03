@@ -16,6 +16,12 @@ function getAvatarColor(index: number): string {
   return AVATAR_COLORS[index % AVATAR_COLORS.length];
 }
 
+const STAGGER_CLASSES = ['stagger-1', 'stagger-2', 'stagger-3', 'stagger-4', 'stagger-5', 'stagger-6'];
+
+function getStaggerClass(index: number): string {
+  return STAGGER_CLASSES[Math.min(index, STAGGER_CLASSES.length - 1)];
+}
+
 export function HintChecking() {
   const { state } = useGameState();
   const isGuesser = state.myRole === 'GUESSER';
@@ -28,7 +34,7 @@ export function HintChecking() {
           timeRemaining={state.timeRemaining}
           totalTime={GAME_CONFIG.HINT_CHECKING_SECONDS}
         />
-        <div className="bg-white rounded-2xl shadow-md p-8 text-center w-full border-l-4 border-l-[var(--color-warning)]">
+        <div className="bg-white rounded-2xl shadow-md p-8 text-center w-full border-l-4 border-l-[var(--color-warning)] animate-phase-enter">
           <p className="text-3xl mb-3">🔍</p>
           <p className="text-2xl font-extrabold text-amber-600 mb-2">
             被りチェック中...
@@ -41,7 +47,7 @@ export function HintChecking() {
     );
   }
 
-  // Hint givers see the duplicate check results
+  // Hint givers see the duplicate check results with staggered animation
   return (
     <div className="flex flex-col items-center gap-6 py-4">
       <Timer
@@ -59,6 +65,7 @@ export function HintChecking() {
             key={hint.playerId}
             className={`
               flex items-center gap-3 bg-white rounded-2xl shadow-sm px-4 py-3
+              animate-slide-in-right ${getStaggerClass(index)}
               ${hint.isDuplicate
                 ? 'border-l-4 border-l-[var(--color-error)]'
                 : 'border-l-4 border-l-[var(--color-success)]'}

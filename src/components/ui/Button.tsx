@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes } from 'react';
+import { hapticLight } from '@/lib/haptics';
 
 type ButtonVariant = 'primary' | 'secondary';
 
@@ -28,9 +29,17 @@ export function Button({
   variant = 'primary',
   className = '',
   disabled,
+  onClick,
   children,
   ...rest
 }: ButtonProps) {
+  function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
+    if (!disabled) {
+      hapticLight();
+    }
+    onClick?.(e);
+  }
+
   return (
     <button
       className={`
@@ -41,6 +50,7 @@ export function Button({
         ${className}
       `}
       disabled={disabled}
+      onClick={handleClick}
       {...rest}
     >
       {children}
