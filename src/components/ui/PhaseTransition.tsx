@@ -35,9 +35,10 @@ export function PhaseTransition({ phaseKey, children, className = '' }: PhaseTra
     return () => clearTimeout(timer);
   }, [phaseKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // When animating===false a new children may have arrived without key change
-  // (e.g. state updates within the same phase). Pass them through directly.
-  const content = animating ? displayedChildren : children;
+  // phaseKey !== displayedKey means the effect hasn't fired yet (first render after change).
+  // In that case keep showing the old displayedChildren to avoid a 1-frame flash of new content.
+  // When same phase (no key change), pass children through directly so in-phase state updates work.
+  const content = (animating || phaseKey !== displayedKey) ? displayedChildren : children;
 
   return (
     <div
