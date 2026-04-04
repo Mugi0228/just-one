@@ -22,102 +22,121 @@ export function RoundResult() {
   return (
     <div className={`flex flex-col gap-4 ${needsBottomPadding ? 'pb-20' : ''}`}>
       <h3 className="text-xl font-extrabold text-center text-gray-800">
-        ラウンド {state.currentRound} 結果
+        ラウンド {state.currentRound} / {state.totalRounds} 結果
       </h3>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-4">
         {state.roundResults.map((result) => (
           <div
             key={result.teamId}
-            className={`
-              bg-white rounded-2xl shadow-md p-5
-              ${result.isCorrect
-                ? 'border-2 border-[var(--color-success)]'
-                : 'border-2 border-[var(--color-error)]'}
-            `}
+            className="bg-white rounded-2xl shadow-md overflow-hidden"
           >
-            <div className="flex items-center justify-between mb-3">
-              <span className="font-extrabold text-lg text-gray-800">{result.teamName}</span>
-              {result.isCorrect ? (
-                <span className="font-extrabold text-lg text-[var(--color-success)]">
-                  🎉 正解！
+            {/* Card header — colored by result */}
+            <div
+              className={`px-5 py-4 flex items-center justify-between ${
+                result.isCorrect
+                  ? 'bg-[var(--color-success)]'
+                  : 'bg-[var(--color-error)]'
+              }`}
+            >
+              <span className="font-extrabold text-white text-lg">{result.teamName}</span>
+              <div className="flex items-center gap-3">
+                <span className="font-extrabold text-white text-lg">
+                  {result.isCorrect ? '🎉 正解！' : '❌ 不正解'}
                 </span>
-              ) : (
-                <span className="font-extrabold text-lg text-[var(--color-error)]">
-                  不正解...
-                </span>
-              )}
-            </div>
-
-            <div className="text-sm text-gray-500 mb-1 font-semibold">
-              お題: <span className="text-gray-800 font-bold">{result.topic}</span>
-            </div>
-
-            <div className="text-sm text-gray-500 mb-1 font-semibold">
-              回答者: {result.guesserName} →{' '}
-              <span className="text-gray-800 font-bold">
-                {result.answer ?? '(未回答)'}
-              </span>
-            </div>
-
-            <div className="flex flex-wrap gap-1.5 mt-3">
-              {result.hints.map((hint) => (
-                <span
-                  key={hint.playerId}
-                  className={`
-                    text-xs font-bold rounded-full px-3 py-1
-                    ${hint.isDuplicate
-                      ? 'bg-red-100 text-[var(--color-error)] line-through'
-                      : 'bg-green-100 text-green-700'}
-                  `}
-                >
-                  {hint.text}
-                </span>
-              ))}
-            </div>
-
-            <div className="mt-3 flex items-center justify-between">
-              {state.isHost && state.progressionMode === 'manual' && (
-                <div className="flex gap-2">
-                  <button
-                    onClick={() =>
-                      socket.emit('host:override-result', {
-                        teamId: result.teamId,
-                        isCorrect: true,
-                      })
-                    }
-                    className={`text-xs font-bold px-3 py-1 rounded-full transition-colors ${
-                      result.isCorrect
-                        ? 'bg-green-500 text-white'
-                        : 'bg-green-100 text-green-700 hover:bg-green-200'
-                    }`}
-                  >
-                    ⭕ 正解
-                  </button>
-                  <button
-                    onClick={() =>
-                      socket.emit('host:override-result', {
-                        teamId: result.teamId,
-                        isCorrect: false,
-                      })
-                    }
-                    className={`text-xs font-bold px-3 py-1 rounded-full transition-colors ${
-                      !result.isCorrect
-                        ? 'bg-red-500 text-white'
-                        : 'bg-red-100 text-red-700 hover:bg-red-200'
-                    }`}
-                  >
-                    ❌ 不正解
-                  </button>
-                </div>
-              )}
-              <div className={`text-right ${state.isHost && state.progressionMode === 'manual' ? '' : 'ml-auto'}`}>
-                <span className="inline-block bg-purple-100 text-[var(--color-primary)] font-extrabold text-sm px-3 py-1 rounded-full">
+                <span className="bg-white/25 text-white font-extrabold text-sm px-3 py-1 rounded-full">
                   +{result.score}pt
                 </span>
-                <span className="ml-2 text-gray-500 text-sm font-bold">
-                  (合計 {result.totalScore}pt)
+              </div>
+            </div>
+
+            {/* Card body */}
+            <div className="px-5 py-4 flex flex-col gap-4">
+              {/* Topic */}
+              <div>
+                <p className="text-xs text-gray-400 font-bold uppercase tracking-wide mb-1">お題</p>
+                <p className="text-2xl font-extrabold text-gray-900">{result.topic}</p>
+              </div>
+
+              {/* Answer */}
+              <div>
+                <p className="text-xs text-gray-400 font-bold uppercase tracking-wide mb-1">
+                  回答者: {result.guesserName}
+                </p>
+                <p
+                  className={`text-xl font-extrabold ${
+                    result.answer
+                      ? result.isCorrect
+                        ? 'text-[var(--color-success)]'
+                        : 'text-[var(--color-error)]'
+                      : 'text-gray-400'
+                  }`}
+                >
+                  {result.answer ?? '(未回答)'}
+                </p>
+              </div>
+
+              {/* Hints */}
+              {result.hints.length > 0 && (
+                <div>
+                  <p className="text-xs text-gray-400 font-bold uppercase tracking-wide mb-2">ヒント</p>
+                  <div className="flex flex-wrap gap-2">
+                    {result.hints.map((hint) => (
+                      <span
+                        key={hint.playerId}
+                        className={`
+                          text-sm font-bold rounded-full px-3 py-1.5
+                          ${hint.isDuplicate
+                            ? 'bg-red-100 text-[var(--color-error)] line-through opacity-60'
+                            : 'bg-purple-100 text-[var(--color-primary)]'}
+                        `}
+                      >
+                        {hint.text}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Score + host override */}
+              <div className="flex items-center justify-between pt-1 border-t border-gray-100">
+                <span className="text-gray-500 text-sm font-bold">
+                  合計 {result.totalScore}pt
                 </span>
+                {state.isHost && state.progressionMode === 'manual' && (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() =>
+                        socket.emit('host:override-result', {
+                          teamId: result.teamId,
+                          isCorrect: true,
+                        })
+                      }
+                      className={`text-xs font-bold px-3 py-1 rounded-full transition-colors ${
+                        result.isCorrect
+                          ? 'bg-green-500 text-white'
+                          : 'bg-green-100 text-green-700 hover:bg-green-200'
+                      }`}
+                    >
+                      ⭕ 正解
+                    </button>
+                    <button
+                      onClick={() =>
+                        socket.emit('host:override-result', {
+                          teamId: result.teamId,
+                          isCorrect: false,
+                        })
+                      }
+                      className={`text-xs font-bold px-3 py-1 rounded-full transition-colors ${
+                        !result.isCorrect
+                          ? 'bg-red-500 text-white'
+                          : 'bg-red-100 text-red-700 hover:bg-red-200'
+                      }`}
+                    >
+                      ❌ 不正解
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

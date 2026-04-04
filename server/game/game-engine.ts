@@ -178,6 +178,7 @@ export const startRound = (io: AppServer, sessionCode: string): void => {
 
     io.to(socketId).emit('game:round-start', {
       round: nextRound,
+      totalRounds: session.totalRounds,
       topic: isGuesser ? '' : sharedTopic,
       teams: teamsInfo,
     });
@@ -618,7 +619,7 @@ export const proceedToNextRound = (io: AppServer, sessionCode: string): void => 
 
   updateSession(sessionCode, (s) => clearSessionTimer(s));
 
-  if (session.currentRound >= GAME_CONFIG.TOTAL_ROUNDS) {
+  if (session.currentRound >= session.totalRounds) {
     showFinalResult(io, sessionCode);
   } else {
     startRound(io, sessionCode);

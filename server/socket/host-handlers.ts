@@ -43,7 +43,7 @@ export const registerHostHandlers = (
   // ----------------------------------------------------------------
   // host:create-session
   // ----------------------------------------------------------------
-  socket.on('host:create-session', ({ hostName, progressionMode }) => {
+  socket.on('host:create-session', ({ hostName, progressionMode, totalRounds }) => {
     const validation = validatePlayerName(hostName);
     if (!validation.valid) {
       socket.emit('error', {
@@ -53,7 +53,8 @@ export const registerHostHandlers = (
       return;
     }
 
-    const session = createSession(socket.id, validation.sanitized, progressionMode);
+    const clampedRounds = Math.min(20, Math.max(1, Math.floor(totalRounds ?? 7)));
+    const session = createSession(socket.id, validation.sanitized, progressionMode, clampedRounds);
     const hostPlayer = session.players[0];
 
     hostSessionMap.set(socket.id, session.code);

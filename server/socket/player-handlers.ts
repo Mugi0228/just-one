@@ -269,6 +269,7 @@ export const registerPlayerHandlers = (
       phase: updatedSession.phase,
       progressionMode: updatedSession.progressionMode,
       currentRound: updatedSession.currentRound,
+      totalRounds: updatedSession.totalRounds,
       topic,
       timeRemaining: getTimerRemaining(sessionCode),
       roundResults,

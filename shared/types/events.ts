@@ -11,7 +11,7 @@ import type {
 
 /** クライアント → サーバー イベント */
 export interface ClientEvents {
-  'host:create-session': (payload: { hostName: string; progressionMode: ProgressionMode }) => void;
+  'host:create-session': (payload: { hostName: string; progressionMode: ProgressionMode; totalRounds: number }) => void;
   'host:start-team-shuffle': () => void;
   'host:confirm-teams': () => void;
   'host:start-game': () => void;
@@ -56,6 +56,7 @@ export interface ServerEvents {
   }) => void;
   'game:round-start': (payload: {
     round: number;
+    totalRounds: number;
     topic: string;
     teams: readonly TeamRoundInfo[];
   }) => void;
@@ -89,6 +90,7 @@ export interface ServerEvents {
     phase: GamePhase;
     progressionMode: ProgressionMode;
     currentRound: number;
+    totalRounds: number;
     topic: string;
     timeRemaining: number;
     roundResults: readonly TeamRoundResult[];

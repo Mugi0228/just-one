@@ -9,7 +9,7 @@ import type { ProgressionMode } from '@shared/types/game';
 type TopView = 'menu' | 'create' | 'join';
 
 export function TopPage() {
-  const { state, setPendingProgressionMode } = useGameState();
+  const { state, setPendingProgressionMode, setPendingTotalRounds } = useGameState();
   const [view, setView] = useState<TopView>('menu');
 
   if (view === 'create') {
@@ -17,6 +17,7 @@ export function TopPage() {
       <CreateView
         onBack={() => setView('menu')}
         setPendingProgressionMode={setPendingProgressionMode}
+        setPendingTotalRounds={setPendingTotalRounds}
         error={state.error}
       />
     );
@@ -60,12 +61,16 @@ export function TopPage() {
 interface CreateViewProps {
   readonly onBack: () => void;
   readonly setPendingProgressionMode: (mode: ProgressionMode) => void;
+  readonly setPendingTotalRounds: (rounds: number) => void;
   readonly error: string | null;
 }
 
-function CreateView({ onBack, setPendingProgressionMode, error }: CreateViewProps) {
+const ROUND_OPTIONS = [3, 5, 7, 10] as const;
+
+function CreateView({ onBack, setPendingProgressionMode, setPendingTotalRounds, error }: CreateViewProps) {
   const [hostName, setHostName] = useState('');
   const [progressionMode, setProgressionMode] = useState<ProgressionMode>('auto');
+  const [totalRounds, setTotalRounds] = useState(7);
   const [isCreating, setIsCreating] = useState(false);
   const cleanupRef = useRef<(() => void) | null>(null);
 
@@ -84,9 +89,11 @@ function CreateView({ onBack, setPendingProgressionMode, error }: CreateViewProp
     if (!canCreate) return;
     setIsCreating(true);
     setPendingProgressionMode(progressionMode);
+    setPendingTotalRounds(totalRounds);
     socket.emit('host:create-session', {
       hostName: hostName.trim(),
       progressionMode,
+      totalRounds,
     });
 
     const timeout = setTimeout(() => setIsCreating(false), 5000);
@@ -131,6 +138,28 @@ function CreateView({ onBack, setPendingProgressionMode, error }: CreateViewProp
           value={hostName}
           onChange={(e) => setHostName(e.target.value)}
         />
+
+        {/* Round count selector */}
+        <div className="flex flex-col gap-2">
+          <label className="text-sm text-gray-600 font-bold">ラウンド数</label>
+          <div className="flex gap-2">
+            {ROUND_OPTIONS.map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => setTotalRounds(n)}
+                className={`
+                  flex-1 rounded-2xl py-3 font-extrabold text-lg transition-all duration-150
+                  ${totalRounds === n
+                    ? 'bg-[var(--color-primary)] text-white shadow-sm'
+                    : 'bg-gray-50 border-[3px] border-gray-200 text-gray-600 hover:border-gray-300'}
+                `}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Progression mode selector */}
         <div className="flex flex-col gap-2">

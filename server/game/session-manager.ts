@@ -22,6 +22,7 @@ export interface GameSession {
   readonly players: readonly Player[];
   readonly phase: GamePhase;
   readonly progressionMode: ProgressionMode;
+  readonly totalRounds: number;
   readonly teams: readonly Team[];
   readonly currentRound: number;
   readonly teamRoundStates: readonly TeamRoundState[];
@@ -104,6 +105,7 @@ export const createSession = (
   hostSocketId: string,
   hostName: string,
   progressionMode: ProgressionMode,
+  totalRounds: number,
 ): GameSession => {
   const code = generateSessionCode(getExistingCodes());
 
@@ -121,6 +123,7 @@ export const createSession = (
     players: [hostPlayer],
     phase: 'LOBBY',
     progressionMode,
+    totalRounds,
     teams: [],
     currentRound: 0,
     teamRoundStates: [],

@@ -8,6 +8,7 @@ import {
 } from 'react';
 import { socket } from '@/lib/socket';
 import { useSocket } from '@/hooks/useSocket';
+import { GAME_CONFIG } from '@shared/constants/game-config';
 import type {
   GamePhase,
   Player,
@@ -35,6 +36,7 @@ export interface GameState {
   readonly isHost: boolean;
   readonly progressionMode: ProgressionMode;
   readonly currentRound: number;
+  readonly totalRounds: number;
   readonly topic: string;
   readonly hints: readonly RevealedHint[];
   readonly timeRemaining: number;
@@ -58,6 +60,7 @@ const initialState: GameState = {
   isHost: false,
   progressionMode: 'auto',
   currentRound: 0,
+  totalRounds: GAME_CONFIG.TOTAL_ROUNDS,
   topic: '',
   hints: [],
   timeRemaining: 0,
@@ -75,7 +78,7 @@ const initialState: GameState = {
 // ---------------------------------------------------------------------------
 
 type GameAction =
-  | { type: 'SESSION_CREATED'; sessionCode: string; playerId: string; progressionMode: ProgressionMode }
+  | { type: 'SESSION_CREATED'; sessionCode: string; playerId: string; progressionMode: ProgressionMode; totalRounds: number }
   | { type: 'SESSION_JOINED'; player: Player; players: readonly Player[]; phase: GamePhase }
   | { type: 'PLAYER_JOINED'; player: Player; players: readonly Player[] }
   | { type: 'PLAYER_LEFT'; playerId: string; players: readonly Player[] }
@@ -83,6 +86,7 @@ type GameAction =
   | {
       type: 'ROUND_START';
       round: number;
+      totalRounds: number;
       topic: string;
       teams: readonly TeamRoundInfo[];
     }
@@ -135,6 +139,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         myPlayerId: action.playerId,
         isHost: true,
         progressionMode: action.progressionMode,
+        totalRounds: action.totalRounds,
       };
 
     case 'SESSION_JOINED':
@@ -182,6 +187,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return {
         ...state,
         currentRound: action.round,
+        totalRounds: action.totalRounds,
         topic: action.topic,
         teamRoundInfos: [...action.teams],
         myRole,
@@ -273,6 +279,7 @@ interface GameContextValue {
   readonly state: GameState;
   readonly dispatch: React.Dispatch<GameAction>;
   readonly setPendingProgressionMode: (mode: ProgressionMode) => void;
+  readonly setPendingTotalRounds: (rounds: number) => void;
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -297,6 +304,7 @@ export function GameProvider({ children }: GameProviderProps) {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   // Track the progression mode chosen when creating a session
   const pendingProgressionModeRef = useRef<ProgressionMode>('auto');
+  const pendingTotalRoundsRef = useRef<number>(GAME_CONFIG.TOTAL_ROUNDS);
 
   // Connect socket
   useSocket();
@@ -311,6 +319,7 @@ export function GameProvider({ children }: GameProviderProps) {
         sessionCode,
         playerId,
         progressionMode: pendingProgressionModeRef.current,
+        totalRounds: pendingTotalRoundsRef.current,
       });
       // Persist for reconnection
       localStorage.setItem('just-one-token', sessionToken);
@@ -339,8 +348,8 @@ export function GameProvider({ children }: GameProviderProps) {
       dispatch({ type: 'TEAMS_ASSIGNED', teams });
     });
 
-    s.on('game:round-start', ({ round, topic, teams }) => {
-      dispatch({ type: 'ROUND_START', round, topic, teams });
+    s.on('game:round-start', ({ round, totalRounds, topic, teams }) => {
+      dispatch({ type: 'ROUND_START', round, totalRounds, topic, teams });
     });
 
     s.on('game:phase-change', ({ phase, timeRemaining }) => {
@@ -399,6 +408,7 @@ export function GameProvider({ children }: GameProviderProps) {
           isHost: payload.isHost,
           progressionMode: payload.progressionMode,
           currentRound: payload.currentRound,
+          totalRounds: payload.totalRounds,
           topic: payload.topic,
           hints: [...payload.hints],
           timeRemaining: payload.timeRemaining,
@@ -447,8 +457,12 @@ export function GameProvider({ children }: GameProviderProps) {
     pendingProgressionModeRef.current = mode;
   }
 
+  function setPendingTotalRounds(rounds: number) {
+    pendingTotalRoundsRef.current = rounds;
+  }
+
   return (
-    <GameContext.Provider value={{ state, dispatch, setPendingProgressionMode }}>
+    <GameContext.Provider value={{ state, dispatch, setPendingProgressionMode, setPendingTotalRounds }}>
       {children}
     </GameContext.Provider>
   );
