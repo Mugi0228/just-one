@@ -19,7 +19,7 @@ type AppSocket = Socket<ClientEvents, ServerEvents>;
 type AppServer = Server<ClientEvents, ServerEvents>;
 
 /**
- * ソケットIDとセッション情報のマッピング（プレイヤー用）。
+ * ソケットIDとルーム情報のマッピング（プレイヤー用）。
  * handler.ts から共有するため export する。
  */
 export const playerSessionMap = new Map<
@@ -43,7 +43,7 @@ export const registerPlayerHandlers = (
     if (existingMapping) {
       socket.emit('error', {
         code: 'ALREADY_JOINED',
-        message: '既にセッションに参加しています',
+        message: 'すでにルームに参加しています',
       });
       return;
     }
@@ -61,7 +61,7 @@ export const registerPlayerHandlers = (
     if (!session) {
       socket.emit('error', {
         code: 'SESSION_NOT_FOUND',
-        message: 'セッションが見つかりません',
+        message: 'ルームが見つかりません',
       });
       return;
     }
@@ -109,7 +109,7 @@ export const registerPlayerHandlers = (
       playerId,
     });
 
-    // セッショントークン作成
+    // ルームトークン作成
     const sessionToken = createSessionToken(session.code, playerId);
 
     // ソケットルームに参加
@@ -138,7 +138,7 @@ export const registerPlayerHandlers = (
     if (!tokenData) {
       socket.emit('error', {
         code: 'INVALID_TOKEN',
-        message: 'セッショントークンが無効です',
+        message: 'ルームトークンが無効です',
       });
       return;
     }
@@ -148,7 +148,7 @@ export const registerPlayerHandlers = (
     if (!session) {
       socket.emit('error', {
         code: 'SESSION_NOT_FOUND',
-        message: 'セッションが見つかりません',
+        message: 'ルームが見つかりません',
       });
       return;
     }
@@ -286,7 +286,7 @@ export const registerPlayerHandlers = (
     if (!mapping) {
       socket.emit('error', {
         code: 'NOT_IN_SESSION',
-        message: 'セッションに参加していません',
+        message: 'ルームに参加していません',
       });
       return;
     }
@@ -317,7 +317,7 @@ export const registerPlayerHandlers = (
     if (!mapping) {
       socket.emit('error', {
         code: 'NOT_IN_SESSION',
-        message: 'セッションに参加していません',
+        message: 'ルームに参加していません',
       });
       return;
     }

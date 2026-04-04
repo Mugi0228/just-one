@@ -28,7 +28,7 @@ type AppSocket = Socket<ClientEvents, ServerEvents>;
 type AppServer = Server<ClientEvents, ServerEvents>;
 
 /**
- * ソケットIDとセッションコードのマッピング（ホスト用）。
+ * ソケットIDとルームコードのマッピング（ホスト用）。
  * handler.ts から共有するため export する。
  */
 export const hostSessionMap = new Map<string, string>();
@@ -67,13 +67,13 @@ export const registerHostHandlers = (
     // プレイヤーID → ソケットID のマッピングを登録（ホストのIDはnanoidのため）
     registerPlayerSocket(hostPlayer.id, socket.id);
 
-    // ホストをセッションルームに参加
+    // ホストをルームに参加
     socket.join(session.code);
 
-    // セッショントークン作成
+    // ルームトークン作成
     const sessionToken = createSessionToken(session.code, hostPlayer.id);
 
-    // ホストにセッション作成完了を通知（playerId付き）
+    // ホストにルーム作成完了を通知（playerId付き）
     socket.emit('session:created', {
       sessionCode: session.code,
       playerId: hostPlayer.id,
@@ -95,7 +95,7 @@ export const registerHostHandlers = (
     if (!sessionCode) {
       socket.emit('error', {
         code: 'NO_SESSION',
-        message: 'セッションが見つかりません',
+        message: 'ルームが見つかりません',
       });
       return;
     }
@@ -149,7 +149,7 @@ export const registerHostHandlers = (
     if (!sessionCode) {
       socket.emit('error', {
         code: 'NO_SESSION',
-        message: 'セッションが見つかりません',
+        message: 'ルームが見つかりません',
       });
       return;
     }
@@ -190,7 +190,7 @@ export const registerHostHandlers = (
     if (!sessionCode) {
       socket.emit('error', {
         code: 'NO_SESSION',
-        message: 'セッションが見つかりません',
+        message: 'ルームが見つかりません',
       });
       return;
     }
@@ -221,7 +221,7 @@ export const registerHostHandlers = (
     if (!sessionCode) {
       socket.emit('error', {
         code: 'NO_SESSION',
-        message: 'セッションが見つかりません',
+        message: 'ルームが見つかりません',
       });
       return;
     }
@@ -230,7 +230,7 @@ export const registerHostHandlers = (
     if (!session) {
       socket.emit('error', {
         code: 'NO_SESSION',
-        message: 'セッションが見つかりません',
+        message: 'ルームが見つかりません',
       });
       return;
     }
@@ -285,7 +285,7 @@ export const registerHostHandlers = (
     if (!sessionCode) {
       socket.emit('error', {
         code: 'NO_SESSION',
-        message: 'セッションが見つかりません',
+        message: 'ルームが見つかりません',
       });
       return;
     }
@@ -311,7 +311,7 @@ export const registerHostHandlers = (
     if (!sessionCode) {
       socket.emit('error', {
         code: 'NO_SESSION',
-        message: 'セッションが見つかりません',
+        message: 'ルームが見つかりません',
       });
       return;
     }
@@ -336,7 +336,7 @@ export const registerHostHandlers = (
     if (!sessionCode) {
       socket.emit('error', {
         code: 'NO_SESSION',
-        message: 'セッションが見つかりません',
+        message: 'ルームが見つかりません',
       });
       return;
     }
@@ -361,7 +361,7 @@ export const registerHostHandlers = (
     if (!sessionCode) {
       socket.emit('error', {
         code: 'NO_SESSION',
-        message: 'セッションが見つかりません',
+        message: 'ルームが見つかりません',
       });
       return;
     }
@@ -377,7 +377,7 @@ export const registerHostHandlers = (
     if (!sessionCode) {
       socket.emit('error', {
         code: 'NO_SESSION',
-        message: 'セッションが見つかりません',
+        message: 'ルームが見つかりません',
       });
       return;
     }
@@ -393,7 +393,7 @@ export const registerHostHandlers = (
     if (!sessionCode) {
       socket.emit('error', {
         code: 'NO_SESSION',
-        message: 'セッションが見つかりません',
+        message: 'ルームが見つかりません',
       });
       return;
     }
@@ -409,7 +409,7 @@ export const registerHostHandlers = (
     if (!sessionCode) {
       socket.emit('error', {
         code: 'NO_SESSION',
-        message: 'セッションが見つかりません',
+        message: 'ルームが見つかりません',
       });
       return;
     }
@@ -425,7 +425,7 @@ export const registerHostHandlers = (
     if (!sessionCode) {
       socket.emit('error', {
         code: 'NO_SESSION',
-        message: 'セッションが見つかりません',
+        message: 'ルームが見つかりません',
       });
       return;
     }

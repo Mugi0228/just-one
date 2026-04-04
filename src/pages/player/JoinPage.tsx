@@ -45,7 +45,7 @@ export function JoinPage() {
       <div className="bg-gray-800 rounded-2xl p-6 flex flex-col gap-4">
         <Input
           id="session-code"
-          label="セッションコード"
+          label="ルームコード"
           placeholder="4桁の英数字"
           maxLength={GAME_CONFIG.SESSION_CODE_LENGTH}
           value={sessionCode}

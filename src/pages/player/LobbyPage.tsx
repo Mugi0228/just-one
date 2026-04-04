@@ -28,7 +28,7 @@ export function LobbyPage() {
     <div className={`flex flex-col gap-6 ${state.isHost ? 'pb-20' : ''}`}>
       {/* Session code */}
       <div className="bg-white rounded-2xl shadow-md p-6 text-center">
-        <p className="text-gray-500 text-sm font-bold mb-2">セッションコード</p>
+        <p className="text-gray-500 text-sm font-bold mb-2">ルームコード</p>
         <div className="inline-block border-[3px] border-dashed border-[var(--color-primary)] rounded-2xl px-8 py-3">
           <p className="text-5xl font-extrabold tracking-widest text-[var(--color-primary)]">
             {state.sessionCode}

@@ -39,7 +39,7 @@ export const registerSocketHandlers = (io: AppServer): void => {
             updatePlayerConnection(hostSession, hostPlayer.id, false);
           }
 
-          // 再接続猶予タイマーを開始（60秒後にセッション削除）
+          // 再接続猶予タイマーを開始（60秒後にルーム削除）
           const timer = setTimeout(() => {
             const currentSession = getSession(hostSession);
             if (currentSession) {
@@ -47,7 +47,7 @@ export const registerSocketHandlers = (io: AppServer): void => {
               if (host && !host.isConnected) {
                 io.to(hostSession).emit('error', {
                   code: 'HOST_DISCONNECTED',
-                  message: 'ホストが切断しました。セッションは終了します。',
+                  message: 'ホストが切断しました。ルームは終了します。',
                 });
                 deleteSession(hostSession);
               }

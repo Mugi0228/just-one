@@ -15,7 +15,7 @@ export interface TeamRoundState {
   readonly score: number;
 }
 
-/** ゲームセッションの内部状態 */
+/** ゲームルームの内部状態 */
 export interface GameSession {
   readonly code: string;
   readonly hostSocketId: string;
@@ -33,17 +33,17 @@ export interface GameSession {
   readonly guesserRotation: ReadonlyMap<string, number>; // teamId → next guesser index
 }
 
-/** セッションストア */
+/** ルームストア */
 const sessions = new Map<string, GameSession>();
 
 /** プレイヤーID → ソケットID のマッピング（player.id !== socket.id の場合のルックアップ用） */
 const playerToSocketMap = new Map<string, string>();
 
-/** セッショントークン → { sessionCode, playerId } のマッピング（再接続用） */
+/** ルームトークン → { sessionCode, playerId } のマッピング（再接続用） */
 const tokenStore = new Map<string, { readonly sessionCode: string; readonly playerId: string }>();
 
 /**
- * セッショントークンを作成し、保存する。
+ * ルームトークンを作成し、保存する。
  */
 export const createSessionToken = (
   sessionCode: string,
@@ -55,7 +55,7 @@ export const createSessionToken = (
 };
 
 /**
- * トークンからセッション情報を検索する。
+ * トークンからルーム情報を検索する。
  */
 export const lookupToken = (
   token: string,
@@ -93,11 +93,11 @@ export const unregisterPlayerSocket = (playerId: string): void => {
 export const getSocketIdByPlayerId = (playerId: string): string =>
   playerToSocketMap.get(playerId) ?? playerId;
 
-/** 全セッションコードの集合を取得（コード生成時の衝突チェック用） */
+/** 全ルームコードの集合を取得（コード生成時の衝突チェック用） */
 const getExistingCodes = (): ReadonlySet<string> => new Set(sessions.keys());
 
 /**
- * 新しいセッションを作成する。
+ * 新しいルームを作成する。
  * ホストを最初のプレイヤーとして自動追加する。
  */
 export const createSession = (
@@ -137,13 +137,13 @@ export const createSession = (
 };
 
 /**
- * セッションを取得する。
+ * ルームを取得する。
  */
 export const getSession = (code: string): GameSession | undefined =>
   sessions.get(code);
 
 /**
- * セッションを削除する。
+ * ルームを削除する。
  */
 export const deleteSession = (code: string): boolean => {
   const session = sessions.get(code);
@@ -155,7 +155,7 @@ export const deleteSession = (code: string): boolean => {
 };
 
 /**
- * セッションを更新する（不変更新）。
+ * ルームを更新する（不変更新）。
  */
 export const updateSession = (
   code: string,
@@ -170,7 +170,7 @@ export const updateSession = (
 };
 
 /**
- * プレイヤーをセッションに追加する。
+ * プレイヤーをルームに追加する。
  */
 export const addPlayer = (
   code: string,
@@ -182,7 +182,7 @@ export const addPlayer = (
   }));
 
 /**
- * プレイヤーをセッションから削除する。
+ * プレイヤーをルームから削除する。
  */
 export const removePlayer = (
   code: string,
@@ -209,7 +209,7 @@ export const updatePlayerConnection = (
   }));
 
 /**
- * ソケットIDからセッションを検索する。
+ * ソケットIDからルームを検索する。
  */
 export const findSessionBySocketId = (
   socketId: string,
@@ -269,6 +269,6 @@ export const removeBot = (
   }));
 
 /**
- * 全セッション数を取得する（デバッグ用）。
+ * 全ルーム数を取得する（デバッグ用）。
  */
 export const getSessionCount = (): number => sessions.size;

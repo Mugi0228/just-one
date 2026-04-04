@@ -23,7 +23,7 @@ export const GAME_CONFIG = {
   CORRECT_SCORE: 1,
   /** 全員一致ボーナススコア */
   ALL_UNIQUE_BONUS: 1,
-  /** セッションコード長 */
+  /** ルームコード長 */
   SESSION_CODE_LENGTH: 4,
   /** プレイヤー名の最大文字数 */
   MAX_PLAYER_NAME_LENGTH: 20,

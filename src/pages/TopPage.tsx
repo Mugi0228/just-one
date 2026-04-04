@@ -39,14 +39,14 @@ export function TopPage() {
 
       <div className="flex flex-col gap-4 w-full max-w-xs">
         <Button onClick={() => setView('create')} className="text-xl py-4">
-          ✨ セッションを作成
+          ✨ ルームを作成
         </Button>
         <Button
           onClick={() => setView('join')}
           variant="secondary"
           className="text-xl py-4"
         >
-          🎮 セッションに参加
+          🎮 ルームに参加
         </Button>
       </div>
     </div>
@@ -117,9 +117,9 @@ function CreateView({ onBack, setPendingProgressionMode, error }: CreateViewProp
     <div className="flex flex-col gap-6">
       <div className="text-center">
         <h2 className="text-3xl font-extrabold text-gray-800 mb-2">
-          ✨ セッションを作成
+          ✨ ルームを作成
         </h2>
-        <p className="text-gray-500 font-semibold">新しいセッションを作ります</p>
+        <p className="text-gray-500 font-semibold">新しいルームを作ります</p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-md p-6 flex flex-col gap-5">
@@ -256,15 +256,15 @@ function JoinView({ onBack, error }: JoinViewProps) {
     <div className="flex flex-col gap-6">
       <div className="text-center">
         <h2 className="text-3xl font-extrabold text-gray-800 mb-2">
-          🎮 セッションに参加
+          🎮 ルームに参加
         </h2>
-        <p className="text-gray-500 font-semibold">セッションコードを入力してください</p>
+        <p className="text-gray-500 font-semibold">ルームコードを入力してください</p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-md p-6 flex flex-col gap-4">
         <Input
           id="session-code"
-          label="セッションコード"
+          label="ルームコード"
           placeholder="4桁の英数字"
           maxLength={GAME_CONFIG.SESSION_CODE_LENGTH}
           value={sessionCode}

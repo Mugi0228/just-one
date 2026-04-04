@@ -9,7 +9,7 @@ const generate = customAlphabet(
 );
 
 /**
- * セッションコード（英大文字4文字）を生成する。
+ * ルームコード（英大文字4文字）を生成する。
  * 既存コードとの衝突を避けるため、existingCodes を受け取り重複時はリトライする。
  */
 export const generateSessionCode = (existingCodes: ReadonlySet<string>): string => {

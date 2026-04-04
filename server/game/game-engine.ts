@@ -149,7 +149,7 @@ export const startRound = (io: AppServer, sessionCode: string): void => {
     };
   });
 
-  // セッション更新
+  // ルーム更新
   updateSession(sessionCode, (s) => ({
     ...s,
     currentRound: nextRound,
@@ -626,7 +626,7 @@ export const proceedToNextRound = (io: AppServer, sessionCode: string): void => 
 };
 
 /**
- * セッションの最終結果ランキングを組み立てる。
+ * ルームの最終結果ランキングを組み立てる。
  * showFinalResult と player:rejoin の両方で使用する。
  */
 export const buildFinalResults = (session: GameSession): TeamFinalResult[] => {

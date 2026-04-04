@@ -283,7 +283,7 @@ const shuffle = <T>(arr: readonly T[]): T[] => {
 };
 
 /**
- * セッション単位でお題を管理する TopicProvider。
+ * ルーム単位でお題を管理する TopicProvider。
  * 使用済みお題を追跡し、重複しないよう配布する。
  */
 export interface TopicProvider {

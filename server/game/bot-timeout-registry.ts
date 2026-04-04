@@ -1,4 +1,4 @@
-/** セッションコード → アクティブなボットタイムアウトハンドルのセット */
+/** ルームコード → アクティブなボットタイムアウトハンドルのセット */
 const botTimeouts = new Map<string, Set<ReturnType<typeof setTimeout>>>();
 
 export const trackBotTimeout = (
@@ -21,8 +21,8 @@ export const untrackBotTimeout = (
 };
 
 /**
- * セッションのすべてのボットタイムアウトをキャンセルする。
- * セッション削除時に呼び出す。
+ * ルームのすべてのボットタイムアウトをキャンセルする。
+ * ルーム削除時に呼び出す。
  */
 export const cancelBotTimeouts = (sessionCode: string): void => {
   const handles = botTimeouts.get(sessionCode);
