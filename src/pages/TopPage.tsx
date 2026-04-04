@@ -50,6 +50,8 @@ export function TopPage() {
           🎮 ルームに参加
         </Button>
       </div>
+
+      <RulesAccordion />
     </div>
   );
 }
@@ -327,6 +329,59 @@ function JoinView({ onBack, error }: JoinViewProps) {
       {error && (
         <div className="bg-red-50 border-2 border-[var(--color-error)] rounded-2xl p-4 text-center text-[var(--color-error)] font-bold">
           {error}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Rules Accordion
+// ---------------------------------------------------------------------------
+
+function RulesAccordion() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="bg-white/80 rounded-2xl shadow-sm overflow-hidden w-full">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between px-5 py-4 text-left"
+      >
+        <span className="font-extrabold text-gray-700">📖 ルール説明</span>
+        <span className={`text-gray-400 font-bold text-sm transition-transform duration-200 ${open ? 'rotate-180' : ''}`}>
+          ▼
+        </span>
+      </button>
+
+      {open && (
+        <div className="px-5 pb-5 flex flex-col gap-4 text-sm border-t border-gray-100">
+          <p className="text-gray-500 font-semibold pt-3">
+            チーム全員で協力して、回答者に「お題」を当ててもらうゲームです。
+          </p>
+
+          <div className="flex flex-col gap-3">
+            {[
+              { icon: '👁️', text: 'ラウンドが始まると、回答者だけがお題を知らない状態になります。' },
+              { icon: '✏️', text: 'ヒント出し役は全員、お題に関連する言葉を1つだけ書きます。' },
+              { icon: '🚫', text: '同じ（または似た）ヒントを書いた人が複数いると、そのヒントは消えてしまいます。' },
+              { icon: '👀', text: '消えずに残ったヒントだけが回答者に公開されます。' },
+              { icon: '🎯', text: '回答者が正解すれば得点！チームで力を合わせてスコアを積み上げよう。' },
+            ].map(({ icon, text }) => (
+              <div key={icon} className="flex gap-3">
+                <span className="text-base shrink-0">{icon}</span>
+                <p className="text-gray-600 font-semibold leading-relaxed">{text}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-purple-50 rounded-xl p-3">
+            <p className="text-[var(--color-primary)] font-extrabold text-xs mb-1">💡 コツ</p>
+            <p className="text-gray-600 font-semibold leading-relaxed">
+              ありきたりな言葉は被って消えやすい。かといってマニアックすぎると伝わらない。ユニークで的確なヒントを狙おう！
+            </p>
+          </div>
         </div>
       )}
     </div>
