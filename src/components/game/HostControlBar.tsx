@@ -48,18 +48,27 @@ export function HostControlBar() {
           {/* Score row — always visible during game phases */}
           {showScores && (
             <div className="flex flex-wrap gap-2 justify-center px-4 pt-2 pb-2">
-              {scores.map((team, i) => (
-                <div
-                  key={team.teamId}
-                  className="flex items-center gap-1.5 bg-gray-50 border border-gray-100 rounded-full px-3 py-1"
-                >
-                  <span className="text-gray-400 font-bold text-xs">{i + 1}.</span>
-                  <span className="font-extrabold text-gray-700 text-sm">{team.teamName}</span>
-                  <span className="bg-purple-100 text-[var(--color-primary)] font-extrabold px-2 py-0.5 rounded-full text-xs">
-                    {team.totalScore}pt
-                  </span>
-                </div>
-              ))}
+              {scores.map((team, i) => {
+                const isMyTeam = team.teamId === state.myTeam?.id;
+                return (
+                  <div
+                    key={team.teamId}
+                    className={`flex items-center gap-1.5 rounded-full px-3 py-1 ${
+                      isMyTeam
+                        ? 'bg-[var(--color-primary)] border border-[var(--color-primary)]'
+                        : 'bg-gray-50 border border-gray-100'
+                    }`}
+                  >
+                    <span className={`font-bold text-xs ${isMyTeam ? 'text-white/70' : 'text-gray-400'}`}>{i + 1}.</span>
+                    <span className={`font-extrabold text-sm ${isMyTeam ? 'text-white' : 'text-gray-700'}`}>{team.teamName}</span>
+                    <span className={`font-extrabold px-2 py-0.5 rounded-full text-xs ${
+                      isMyTeam ? 'bg-white/20 text-white' : 'bg-purple-100 text-[var(--color-primary)]'
+                    }`}>
+                      {team.totalScore}pt
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           )}
 
