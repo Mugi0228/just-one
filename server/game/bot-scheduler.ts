@@ -30,7 +30,7 @@ export const scheduleBotHints = (
     });
 
     for (const botId of botHinterIds) {
-      const delay = 1000 + Math.floor(Math.random() * 2000);
+      const delay = 8000 + Math.floor(Math.random() * 17000);
       const handle = setTimeout(() => {
         untrackBotTimeout(sessionCode, handle);
         const currentSession = getSession(sessionCode);
@@ -59,7 +59,7 @@ export const scheduleBotAnswers = (
     const guesser = session.players.find((p) => p.id === trs.guesserId);
     if (!guesser?.isBot) continue;
 
-    const delay = 2000 + Math.floor(Math.random() * 3000);
+    const delay = 10000 + Math.floor(Math.random() * 10000);
     const handle = setTimeout(() => {
       untrackBotTimeout(sessionCode, handle);
       const currentSession = getSession(sessionCode);
