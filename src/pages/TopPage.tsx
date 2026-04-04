@@ -51,7 +51,9 @@ export function TopPage() {
         </Button>
       </div>
 
-      <RulesAccordion />
+      <div className="w-full max-w-xs">
+        <RulesAccordion />
+      </div>
     </div>
   );
 }
@@ -347,21 +349,21 @@ function RulesAccordion() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left"
+        className="w-full flex items-center justify-between px-4 py-2.5 text-left"
       >
-        <span className="font-extrabold text-gray-700">📖 ルール説明</span>
-        <span className={`text-gray-400 font-bold text-sm transition-transform duration-200 ${open ? 'rotate-180' : ''}`}>
+        <span className="font-extrabold text-gray-700 text-sm">📖 ルール説明</span>
+        <span className={`text-gray-400 font-bold text-xs transition-transform duration-200 ${open ? 'rotate-180' : ''}`}>
           ▼
         </span>
       </button>
 
       {open && (
-        <div className="px-5 pb-5 flex flex-col gap-4 text-sm border-t border-gray-100">
-          <p className="text-gray-500 font-semibold pt-3">
+        <div className="px-4 pb-4 flex flex-col gap-3 border-t border-gray-100">
+          <p className="text-gray-500 font-semibold pt-3 text-base">
             チーム全員で協力して、回答者に「お題」を当ててもらうゲームです。
           </p>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2.5">
             {[
               { icon: '👁️', text: 'ラウンドが始まると、回答者だけがお題を知らない状態になります。' },
               { icon: '✏️', text: 'ヒント出し役は全員、お題に関連する言葉を1つだけ書きます。' },
@@ -369,16 +371,16 @@ function RulesAccordion() {
               { icon: '👀', text: '消えずに残ったヒントだけが回答者に公開されます。' },
               { icon: '🎯', text: '回答者が正解すれば得点！チームで力を合わせてスコアを積み上げよう。' },
             ].map(({ icon, text }) => (
-              <div key={icon} className="flex gap-3">
+              <div key={icon} className="flex gap-2.5">
                 <span className="text-base shrink-0">{icon}</span>
-                <p className="text-gray-600 font-semibold leading-relaxed">{text}</p>
+                <p className="text-gray-600 font-semibold leading-snug text-base">{text}</p>
               </div>
             ))}
           </div>
 
-          <div className="bg-purple-50 rounded-xl p-3">
+          <div className="bg-purple-50 rounded-xl px-3 py-2.5">
             <p className="text-[var(--color-primary)] font-extrabold text-xs mb-1">💡 コツ</p>
-            <p className="text-gray-600 font-semibold leading-relaxed">
+            <p className="text-gray-600 font-semibold leading-snug text-base">
               ありきたりな言葉は被って消えやすい。かといってマニアックすぎると伝わらない。ユニークで的確なヒントを狙おう！
             </p>
           </div>
