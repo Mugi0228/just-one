@@ -20,22 +20,22 @@ export function TopicReveal() {
         <span className="absolute bottom-2 right-3 text-2xl opacity-50">✨</span>
 
         <p className="text-sm text-gray-500 font-bold mb-3">お題</p>
-        <h2 className="text-5xl font-extrabold text-[var(--color-primary)] mb-4">
+        <h2 className="text-5xl font-extrabold text-[var(--color-primary)]">
           {state.myRole === 'GUESSER' ? '???' : state.topic}
         </h2>
-
-        <div className="inline-block">
-          {state.myRole === 'GUESSER' ? (
-            <span className="inline-flex items-center gap-2 bg-amber-100 text-amber-700 font-extrabold rounded-full px-5 py-2 text-sm">
-              🎯 回答者
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-2 bg-cyan-100 text-cyan-700 font-extrabold rounded-full px-5 py-2 text-sm">
-              💡 ヒント出し
-            </span>
-          )}
-        </div>
       </div>
+
+      {state.myRole === 'GUESSER' ? (
+        <div className="text-center flex flex-col gap-2">
+          <p className="text-2xl font-extrabold text-[var(--color-primary)]">あなたは回答者です</p>
+          <p className="text-gray-500 font-semibold">メンバーがヒントを考えます</p>
+        </div>
+      ) : (
+        <div className="text-center flex flex-col gap-2">
+          <p className="text-2xl font-extrabold text-[var(--color-cyan)]">あなたはヒント出しです</p>
+          <p className="text-gray-500 font-semibold">お題に合うヒントを1つ考えてください</p>
+        </div>
+      )}
     </div>
   );
 }
