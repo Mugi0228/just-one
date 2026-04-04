@@ -30,14 +30,12 @@ function ConnectionIndicator() {
 
   if (status === 'connected' && !showSuccess) return null;
 
-  const bg = status === 'connected' ? 'bg-green-500 text-white' : 'bg-amber-400 text-amber-900';
-  const label = status === 'connected'
-    ? '✓ 接続できました'
-    : '⏳ 接続中...';
+  const bg = status === 'connected' ? 'bg-green-500 text-white' : 'bg-black/70 text-white';
+  const label = status === 'connected' ? '✓ 接続できました' : '⏳ 接続中...';
 
   return (
-    <div className="relative h-0 overflow-visible z-20">
-      <div className={`absolute top-0 left-0 right-0 text-center text-sm font-bold py-2 px-4 ${bg}`}>
+    <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center pointer-events-none">
+      <div className={`text-sm font-bold py-2 px-5 rounded-full shadow-lg ${bg}`}>
         {label}
       </div>
     </div>
