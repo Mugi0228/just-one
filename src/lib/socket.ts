@@ -11,7 +11,7 @@ const URL =
 export const socket: TypedSocket = io(URL, {
   autoConnect: false,
   reconnection: true,
-  reconnectionAttempts: 10,
+  reconnectionAttempts: Infinity,
   reconnectionDelay: 1000,
   reconnectionDelayMax: 5000,
 });

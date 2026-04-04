@@ -1,53 +1,43 @@
-import { useEffect, useState, type ReactNode } from 'react';
-import { useConnectionStatus } from '@/hooks/useConnectionStatus';
+import { useEffect, useState, useRef, type ReactNode } from 'react';
+import { useConnectionStatus, type ConnectionStatus } from '@/hooks/useConnectionStatus';
 
 interface PlayerLayoutProps {
   readonly children: ReactNode;
+  readonly hideHeader?: boolean;
 }
 
 function ConnectionIndicator() {
   const status = useConnectionStatus();
-  // Track how long we've been disconnected to distinguish cold-start from runtime disconnect
-  const [disconnectedMs, setDisconnectedMs] = useState(0);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const prevStatusRef = useRef<ConnectionStatus | null>(null);
 
   useEffect(() => {
-    if (status === 'connected') {
-      setDisconnectedMs(0);
-      return;
+    if (prevStatusRef.current !== null && prevStatusRef.current !== 'connected' && status === 'connected') {
+      setShowSuccess(true);
+      const timer = setTimeout(() => setShowSuccess(false), 5000);
+      prevStatusRef.current = status;
+      return () => clearTimeout(timer);
     }
-    const start = Date.now();
-    const id = setInterval(() => setDisconnectedMs(Date.now() - start), 500);
-    return () => clearInterval(id);
+    prevStatusRef.current = status;
   }, [status]);
 
-  if (status === 'connected') return null;
+  if (status === 'connected' && !showSuccess) return null;
 
-  const isReconnecting = status === 'reconnecting';
-  const isColdStart = disconnectedMs < 15_000; // within first 15s = likely cold start
-
-  if (isColdStart && !isReconnecting) {
-    return (
-      <div className="relative z-20 text-center text-sm font-bold py-3 px-4 bg-purple-100 text-purple-700 flex items-center justify-center gap-2">
-        <span className="animate-spin inline-block">⏳</span>
-        サーバー起動中です（初回は少しお待ちください）
-      </div>
-    );
-  }
+  const bg = status === 'connected' ? 'bg-green-500 text-white' : 'bg-amber-400 text-amber-900';
+  const label = status === 'connected'
+    ? '✓ 接続できました'
+    : '⏳ 接続中...';
 
   return (
-    <div
-      className={`relative z-20 text-center text-sm font-bold py-2 px-4 ${
-        isReconnecting
-          ? 'bg-amber-400 text-amber-900'
-          : 'bg-red-500 text-white'
-      }`}
-    >
-      {isReconnecting ? '再接続中...' : '接続が切れました'}
+    <div className="relative h-0 overflow-visible z-20">
+      <div className={`absolute top-0 left-0 right-0 text-center text-sm font-bold py-2 px-4 ${bg}`}>
+        {label}
+      </div>
     </div>
   );
 }
 
-export function PlayerLayout({ children }: PlayerLayoutProps) {
+export function PlayerLayout({ children, hideHeader = false }: PlayerLayoutProps) {
   return (
     <div
       className="min-h-screen flex flex-col bg-[var(--color-bg)] relative overflow-hidden"
@@ -61,14 +51,16 @@ export function PlayerLayout({ children }: PlayerLayoutProps) {
         <div className="absolute -bottom-24 right-1/4 w-[26rem] h-[26rem] bg-purple-300 rounded-full opacity-30 blur-[80px]" />
       </div>
 
-      <header
-        className="relative z-10 bg-white/80 backdrop-blur-sm shadow-md px-4 py-3"
-        style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}
-      >
-        <h1 className="text-center text-2xl font-extrabold text-[var(--color-primary)]">
-          Just One
-        </h1>
-      </header>
+      {!hideHeader && (
+        <header
+          className="relative z-10 bg-white/80 backdrop-blur-sm shadow-md px-4 py-3"
+          style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}
+        >
+          <h1 className="text-center text-2xl font-extrabold text-[var(--color-primary)]">
+            Just One
+          </h1>
+        </header>
+      )}
       <ConnectionIndicator />
       <main className="relative z-10 flex-1 flex flex-col items-center px-4 py-6 pb-8">
         <div className="w-full max-w-lg">{children}</div>
