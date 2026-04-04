@@ -15,7 +15,7 @@ export function Timer({ timeRemaining, totalTime }: TimerProps) {
   const urgentClass = isUrgent ? 'animate-pulse-urgent' : '';
 
   return (
-    <div className={`relative inline-flex items-center justify-center w-20 h-20 ${urgentClass}`}>
+    <div className={`relative inline-flex items-center justify-center w-20 h-20 mb-4 ${urgentClass}`}>
       <svg className="w-full h-full -rotate-90" viewBox="0 0 64 64">
         {/* Background circle */}
         <circle
