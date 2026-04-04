@@ -4,8 +4,6 @@ import { hapticSuccess, hapticError } from '@/lib/haptics';
 
 export function RoundResult() {
   const { state } = useGameState();
-  const needsBottomPadding = state.isHost && state.progressionMode === 'manual';
-
   // Haptic feedback based on results for this player's team
   useEffect(() => {
     if (!state.myTeam) return;
@@ -19,7 +17,7 @@ export function RoundResult() {
   }, [state.currentRound]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className={`flex flex-col gap-4 ${needsBottomPadding ? 'pb-20' : ''}`}>
+    <div className="flex flex-col gap-4">
       <h3 className="text-xl font-extrabold text-center text-gray-800">
         ラウンド {state.currentRound} / {state.totalRounds} 結果
       </h3>
