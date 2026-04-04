@@ -41,7 +41,14 @@ export function RoundResult() {
                   result.isCorrect ? 'bg-[var(--color-success)]' : 'bg-[var(--color-error)]'
                 }`}
               >
+                <div className="flex items-center gap-2">
                 <span className="font-extrabold text-white text-lg">{result.teamName}</span>
+                {result.teamId === state.myTeam?.id && (
+                  <span className="bg-white text-[var(--color-primary)] text-xs font-extrabold px-2 py-0.5 rounded-full">
+                    あなた
+                  </span>
+                )}
+              </div>
                 <div className="flex items-center gap-3">
                   <span className="font-extrabold text-white text-lg">
                     {result.isCorrect ? '🎉 正解！' : '❌ 不正解'}
