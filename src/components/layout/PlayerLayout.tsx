@@ -11,13 +11,19 @@ function ConnectionIndicator() {
   const status = useConnectionStatus();
   const [showSuccess, setShowSuccess] = useState(false);
   const prevStatusRef = useRef<ConnectionStatus | null>(null);
+  const hasConnectedOnce = useRef(false);
 
   useEffect(() => {
     if (prevStatusRef.current !== null && prevStatusRef.current !== 'connected' && status === 'connected') {
-      setShowSuccess(true);
-      const timer = setTimeout(() => setShowSuccess(false), 5000);
-      prevStatusRef.current = status;
-      return () => clearTimeout(timer);
+      if (!hasConnectedOnce.current) {
+        // 初回接続のみバナーを表示
+        hasConnectedOnce.current = true;
+        setShowSuccess(true);
+        const timer = setTimeout(() => setShowSuccess(false), 5000);
+        prevStatusRef.current = status;
+        return () => clearTimeout(timer);
+      }
+      // 再接続時はバナーなしで静かに復帰
     }
     prevStatusRef.current = status;
   }, [status]);
