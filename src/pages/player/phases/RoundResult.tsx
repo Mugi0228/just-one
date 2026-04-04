@@ -16,23 +16,25 @@ export function RoundResult() {
     }
   }, [state.currentRound]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const topic = state.roundResults[0]?.topic;
+
   return (
     <div className="flex flex-col gap-4">
+      {/* Topic — shown once at the top */}
+      {topic && (
+        <div className="flex items-baseline gap-2 px-1">
+          <span className="text-xs text-gray-400 font-bold">お題</span>
+          <span className="text-2xl font-extrabold text-gray-900">{topic}</span>
+        </div>
+      )}
+
       <h3 className="text-xl font-extrabold text-center text-gray-800">
         ラウンド {state.currentRound} / {state.totalRounds} 結果
       </h3>
 
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-3">
         {state.roundResults.map((result) => (
-          <div key={result.teamId} className="flex flex-col gap-2">
-            {/* Topic — outside the card */}
-            <div className="flex items-baseline gap-2 px-1">
-              <span className="text-xs text-gray-400 font-bold">お題</span>
-              <span className="text-2xl font-extrabold text-gray-900">{result.topic}</span>
-            </div>
-
-            {/* Result card */}
-            <div className="bg-white rounded-2xl shadow-md overflow-hidden">
+          <div key={result.teamId} className="bg-white rounded-2xl shadow-md overflow-hidden">
               {/* Card header — colored by result */}
               <div
                 className={`px-5 py-4 flex items-center justify-between ${
@@ -100,7 +102,6 @@ export function RoundResult() {
                 </div>
               </div>
             </div>
-          </div>
         ))}
       </div>
     </div>
