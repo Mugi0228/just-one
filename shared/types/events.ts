@@ -24,6 +24,7 @@ export interface ClientEvents {
   'host:play-again': () => void;
   'host:add-bot': () => void;
   'host:remove-bot': (payload: { botId: string }) => void;
+  'host:back-to-lobby': () => void;
   'player:join': (payload: {
     playerName: string;
     sessionCode: string;

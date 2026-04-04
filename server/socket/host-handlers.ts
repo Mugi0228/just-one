@@ -278,6 +278,27 @@ export const registerHostHandlers = (
   });
 
   // ----------------------------------------------------------------
+  // host:back-to-lobby
+  // ----------------------------------------------------------------
+  socket.on('host:back-to-lobby', () => {
+    const sessionCode = hostSessionMap.get(socket.id);
+    if (!sessionCode) return;
+
+    const session = getSession(sessionCode);
+    if (!session || session.phase !== 'TEAM_ASSIGNMENT') return;
+
+    const updated = updateSession(sessionCode, (s) => ({
+      ...s,
+      phase: 'LOBBY' as const,
+      teams: [],
+    }));
+
+    if (updated) {
+      io.to(sessionCode).emit('game:phase-change', { phase: 'LOBBY', timeRemaining: 0 });
+    }
+  });
+
+  // ----------------------------------------------------------------
   // host:confirm-teams
   // ----------------------------------------------------------------
   socket.on('host:confirm-teams', () => {

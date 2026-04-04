@@ -196,6 +196,8 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         ...state,
         phase: action.phase,
         timeRemaining: action.timeRemaining,
+        // ロビーに戻る場合はチーム情報をリセット
+        ...(action.phase === 'LOBBY' ? { teams: [], myTeam: null, myRole: null } : {}),
       };
 
     case 'TIMER_TICK':

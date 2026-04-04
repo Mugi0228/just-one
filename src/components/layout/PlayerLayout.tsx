@@ -63,7 +63,7 @@ export function PlayerLayout({ children, hideHeader = false }: PlayerLayoutProps
       )}
       <ConnectionIndicator />
       <main className="relative z-10 flex-1 flex flex-col items-center px-4 py-6 pb-8">
-        <div className="w-full max-w-lg">{children}</div>
+        <div className="w-full max-w-lg flex-1 flex flex-col">{children}</div>
       </main>
     </div>
   );

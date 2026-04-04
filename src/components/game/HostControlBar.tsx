@@ -87,6 +87,10 @@ function LobbyControls() {
 function TeamAssignmentControls() {
   const [isStarting, setIsStarting] = useState(false);
 
+  function handleBackToLobby() {
+    socket.emit('host:back-to-lobby');
+  }
+
   function handleReshuffle() {
     socket.emit('host:start-team-shuffle');
   }
@@ -100,6 +104,13 @@ function TeamAssignmentControls() {
 
   return (
     <div className="flex items-center justify-center gap-3">
+      <Button
+        onClick={handleBackToLobby}
+        variant="secondary"
+        className="text-sm px-4 py-2"
+      >
+        ← ロビーに戻る
+      </Button>
       <Button
         onClick={handleReshuffle}
         variant="secondary"
