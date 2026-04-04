@@ -4,6 +4,7 @@ import { useConnectionStatus, type ConnectionStatus } from '@/hooks/useConnectio
 interface PlayerLayoutProps {
   readonly children: ReactNode;
   readonly hideHeader?: boolean;
+  readonly centerContent?: boolean;
 }
 
 function ConnectionIndicator() {
@@ -37,7 +38,7 @@ function ConnectionIndicator() {
   );
 }
 
-export function PlayerLayout({ children, hideHeader = false }: PlayerLayoutProps) {
+export function PlayerLayout({ children, hideHeader = false, centerContent = false }: PlayerLayoutProps) {
   return (
     <div
       className="flex flex-col bg-[var(--color-bg)] relative overflow-x-hidden overflow-y-auto"
@@ -62,8 +63,8 @@ export function PlayerLayout({ children, hideHeader = false }: PlayerLayoutProps
         </header>
       )}
       <ConnectionIndicator />
-      <main className="relative z-10 flex-1 flex flex-col items-center px-4 py-6 pb-8">
-        <div className="w-full max-w-lg flex-1 flex flex-col">{children}</div>
+      <main className={`relative z-10 flex-1 flex flex-col items-center px-4 py-6 pb-8 ${centerContent ? 'justify-center' : ''}`}>
+        <div className="w-full max-w-lg">{children}</div>
       </main>
     </div>
   );
