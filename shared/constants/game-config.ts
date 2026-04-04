@@ -10,9 +10,9 @@ export const GAME_CONFIG = {
   /** 最小プレイ人数 */
   MIN_PLAYERS: 3,
   /** お題表示時間（秒） */
-  TOPIC_REVEAL_SECONDS: 5,
+  TOPIC_REVEAL_SECONDS: 10,
   /** ヒント記入時間（秒） */
-  HINT_WRITING_SECONDS: 60,
+  HINT_WRITING_SECONDS: 30,
   /** 被りチェック表示時間（秒） */
   HINT_CHECKING_SECONDS: 10,
   /** 回答時間（秒） */
