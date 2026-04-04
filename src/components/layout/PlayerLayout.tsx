@@ -46,7 +46,7 @@ export function PlayerLayout({ children, hideHeader = false, centerContent = fal
   return (
     <div
       className="flex flex-col bg-[var(--color-bg)] relative overflow-x-hidden overflow-y-auto"
-      style={{ height: '100dvh', paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
+      style={{ minHeight: '100%', paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       {/* Decorative gradient blobs (全ページ共通) */}
       <div className="pointer-events-none fixed inset-0 z-0">
