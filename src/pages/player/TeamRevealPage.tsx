@@ -345,7 +345,7 @@ function PlayerChip({ player, playerIndex, draggable, isMe, isHost, currentTeamI
 
       {/* Move popover */}
       {showMoveMenu && (
-        <div className="absolute top-full left-0 mt-1 z-20 bg-white rounded-xl shadow-lg border border-gray-200 py-1 min-w-[9rem]">
+        <div className="absolute top-full left-0 mt-1 z-40 bg-white rounded-xl shadow-lg border border-gray-200 py-1 min-w-[9rem]">
           {otherTeams.map((t) => (
             <button
               key={t.id}

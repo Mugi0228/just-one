@@ -81,14 +81,18 @@ export function LobbyPage() {
               >
                 {player.name}
               </span>
-              {/* Host can remove bots */}
-              {state.isHost && player.isBot && (
-                <button
-                  onClick={() => handleRemoveBot(player.id)}
-                  className="text-xs text-[var(--color-error)] hover:text-red-600 font-bold transition-colors"
-                >
-                  削除
-                </button>
+              {/* Host can remove bots — spacer keeps grid cells the same height */}
+              {state.isHost && (
+                player.isBot ? (
+                  <button
+                    onClick={() => handleRemoveBot(player.id)}
+                    className="text-xs text-[var(--color-error)] hover:text-red-600 font-bold transition-colors"
+                  >
+                    削除
+                  </button>
+                ) : (
+                  <div className="h-5" />
+                )
               )}
             </div>
           ))}

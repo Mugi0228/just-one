@@ -16,7 +16,7 @@ function getAvatarColor(index: number): string {
   return AVATAR_COLORS[index % AVATAR_COLORS.length];
 }
 
-const STAGGER_CLASSES = ['stagger-1', 'stagger-2', 'stagger-3', 'stagger-4', 'stagger-5', 'stagger-6'];
+const STAGGER_CLASSES = ['stagger-1', 'stagger-2', 'stagger-3', 'stagger-4', 'stagger-5', 'stagger-6', 'stagger-7', 'stagger-8', 'stagger-9', 'stagger-10'];
 
 function getStaggerClass(index: number): string {
   return STAGGER_CLASSES[Math.min(index, STAGGER_CLASSES.length - 1)];

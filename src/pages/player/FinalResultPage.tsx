@@ -115,7 +115,7 @@ export function FinalResultPage() {
               <tr className="text-gray-500 border-b-2 border-gray-100">
                 <th className="text-left py-3 px-3 font-bold">R</th>
                 {sorted.map((team) => (
-                  <th key={team.teamId} className="text-center py-3 px-3 font-bold">
+                  <th key={team.teamId} className="text-center py-3 px-3 font-bold whitespace-nowrap min-w-[5rem]">
                     {team.teamName}
                   </th>
                 ))}

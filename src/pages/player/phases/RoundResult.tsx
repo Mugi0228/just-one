@@ -41,19 +41,19 @@ export function RoundResult() {
                   result.isCorrect ? 'bg-[var(--color-success)]' : 'bg-[var(--color-error)]'
                 }`}
               >
-                <div className="flex items-center gap-2">
-                <span className="font-extrabold text-white text-lg">{result.teamName}</span>
-                {result.teamId === state.myTeam?.id && (
-                  <span className="bg-white text-[var(--color-primary)] text-xs font-extrabold px-2 py-0.5 rounded-full">
-                    あなた
-                  </span>
-                )}
-              </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <span className="font-extrabold text-white text-lg truncate">{result.teamName}</span>
+                  {result.teamId === state.myTeam?.id && (
+                    <span className="bg-white text-[var(--color-primary)] text-xs font-extrabold px-2 py-0.5 rounded-full shrink-0">
+                      あなた
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
                   <span className="font-extrabold text-white text-lg">
                     {result.isCorrect ? '🎉 正解！' : '❌ 不正解'}
                   </span>
-                  <span className="bg-white/25 text-white font-extrabold text-sm px-3 py-1 rounded-full">
+                  <span className="bg-white/40 text-white font-extrabold text-sm px-3 py-1 rounded-full">
                     +{result.score}pt
                   </span>
                 </div>
