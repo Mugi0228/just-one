@@ -37,11 +37,11 @@ body {
   flex-direction: column;
 }
 
-/* Full-screen layout container: 100dvh with 100vh fallback for older iOS/browsers */
+/* Full-screen layout container
+   --app-height は main.tsx で window.innerHeight から設定（iOS PWA で最も信頼性が高い）
+   フォールバック: 100dvh → -webkit-fill-available → 100vh */
 .layout-full-height {
-  height: 100vh;                   /* fallback: iOS <16, Chrome <108 */
-  height: -webkit-fill-available;  /* fallback: old iOS Safari */
-  height: 100dvh;                  /* modern: dynamic viewport (no browser chrome jump) */
+  height: var(--app-height, 100dvh);
 }
 
 /* Allow text selection in inputs */

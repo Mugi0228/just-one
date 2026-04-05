@@ -46,7 +46,12 @@ export function PlayerLayout({ children, hideHeader = false, centerContent = fal
   return (
     <div
       className="layout-full-height flex flex-col bg-[var(--color-bg)] relative overflow-x-hidden overflow-y-auto"
-      style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
+      style={{
+        paddingTop: 'env(safe-area-inset-top)',
+        paddingBottom: 'env(safe-area-inset-bottom)',
+        // blob が届かない下部に薄いグラデーションを補完（blob は上に重なる）
+        backgroundImage: 'linear-gradient(170deg, rgba(196,181,253,0.3) 0%, transparent 45%, rgba(147,197,253,0.25) 100%)',
+      }}
     >
       {/* Decorative gradient blobs (全ページ共通) */}
       <div className="pointer-events-none fixed inset-0 z-0">
