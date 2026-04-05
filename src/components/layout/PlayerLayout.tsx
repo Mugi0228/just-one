@@ -53,7 +53,7 @@ export function PlayerLayout({ children, hideHeader = false, centerContent = fal
         <div className="absolute -top-32 -left-32 w-[28rem] h-[28rem] bg-purple-400 rounded-full opacity-40 blur-[80px]" />
         <div className="absolute top-1/4 -right-32 w-[32rem] h-[32rem] bg-cyan-300 rounded-full opacity-35 blur-[80px]" />
         <div className="absolute bottom-10 -left-16 w-[24rem] h-[24rem] bg-pink-300 rounded-full opacity-35 blur-[80px]" />
-        <div className="absolute -bottom-24 right-1/4 w-[26rem] h-[26rem] bg-purple-300 rounded-full opacity-30 blur-[80px]" />
+        <div className="absolute -bottom-24 -right-24 w-[26rem] h-[26rem] bg-purple-300 rounded-full opacity-30 blur-[80px]" />
       </div>
 
       {!hideHeader && (
