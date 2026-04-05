@@ -23,6 +23,9 @@ export function Input({ label, className = '', id, ...rest }: InputProps) {
           font-semibold
           ${className}
         `}
+        autoCorrect="off"
+        autoCapitalize="none"
+        spellCheck={false}
         {...rest}
       />
     </div>

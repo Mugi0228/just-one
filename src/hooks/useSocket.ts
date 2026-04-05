@@ -18,12 +18,20 @@ export function useSocket() {
       }
     }
 
+    function handleVisibilityChange() {
+      if (document.visibilityState === 'visible' && !socket.connected) {
+        socket.connect();
+      }
+    }
+
     socket.on('connect', handleConnect);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       socket.off('connect', handleConnect);
-      socket.disconnect();
-      connected.current = false;
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      // Do NOT call socket.disconnect() — preserves connection across re-renders
+      // and allows auto-reconnect after background/foreground transitions.
     };
   }, []);
 

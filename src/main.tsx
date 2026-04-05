@@ -11,6 +11,7 @@ const setAppHeight = () => {
 };
 setAppHeight();
 window.addEventListener('resize', setAppHeight);
+window.addEventListener('orientationchange', setAppHeight);
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

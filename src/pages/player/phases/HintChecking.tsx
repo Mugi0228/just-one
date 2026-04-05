@@ -66,9 +66,11 @@ export function HintChecking() {
             className={`
               flex items-center gap-3 bg-white rounded-2xl shadow-sm px-4 py-3
               animate-slide-in-right ${getStaggerClass(index)}
-              ${hint.isDuplicate
-                ? 'border-l-4 border-l-[var(--color-error)]'
-                : 'border-l-4 border-l-[var(--color-success)]'}
+              ${hint.isDuplicate && hint.duplicateReason === 'synonym'
+                ? 'border-l-4 border-l-orange-400'
+                : hint.isDuplicate
+                  ? 'border-l-4 border-l-[var(--color-error)]'
+                  : 'border-l-4 border-l-[var(--color-success)]'}
             `}
           >
             <div
@@ -83,7 +85,11 @@ export function HintChecking() {
             >
               {hint.text}
             </span>
-            {hint.isDuplicate ? (
+            {hint.isDuplicate && hint.duplicateReason === 'synonym' ? (
+              <span className="flex items-center gap-1 text-orange-500 text-xs font-extrabold">
+                🔀 <span>類義語</span>
+              </span>
+            ) : hint.isDuplicate ? (
               <span className="text-lg">❌</span>
             ) : (
               <span className="text-lg">✅</span>

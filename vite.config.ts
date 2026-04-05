@@ -15,6 +15,8 @@ export default defineConfig({
         name: 'Just One - パーティーワードゲーム',
         short_name: 'Just One',
         description: 'みんなで遊ぶ協力型ワードゲーム',
+        lang: 'ja',
+        categories: ['games'],
         theme_color: '#7C3AED',
         background_color: '#F5F5F0',
         display: 'standalone',

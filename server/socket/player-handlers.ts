@@ -196,7 +196,7 @@ export const registerPlayerHandlers = (
     const isGuesser = updatedSession.teamRoundStates.some(
       (trs) => trs.guesserId === playerId,
     );
-    let hints: { playerId: string; playerName: string; text: string; isDuplicate: boolean }[] = [];
+    let hints: { playerId: string; playerName: string; text: string; isDuplicate: boolean; duplicateReason?: import('@shared/types/game.js').DuplicateReason }[] = [];
 
     if (myTeam) {
       const trs = updatedSession.teamRoundStates.find((t) => t.teamId === myTeam.id);
@@ -223,6 +223,7 @@ export const registerPlayerHandlers = (
               playerName: p?.name ?? 'Unknown',
               text: h.text,
               isDuplicate: h.isDuplicate,
+              duplicateReason: h.duplicateReason,
             };
           });
         }
@@ -254,6 +255,7 @@ export const registerPlayerHandlers = (
                 playerName: p?.name ?? 'Unknown',
                 text: h.text,
                 isDuplicate: h.isDuplicate,
+                duplicateReason: h.duplicateReason,
               };
             }),
           };

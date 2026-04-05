@@ -154,6 +154,12 @@ export const deleteSession = (code: string): boolean => {
     clearInterval(session.timerId);
   }
   cancelBotTimeouts(code);
+  // tokenStore のエントリを削除してメモリリークを防ぐ
+  for (const [token, data] of tokenStore) {
+    if (data.sessionCode === code) {
+      tokenStore.delete(token);
+    }
+  }
   return sessions.delete(code);
 };
 

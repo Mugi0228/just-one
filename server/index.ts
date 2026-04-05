@@ -17,7 +17,10 @@ const httpServer = createServer(app);
 
 const io = new Server<ClientEvents, ServerEvents>(httpServer, {
   cors: IS_PRODUCTION
-    ? {}
+    ? {
+        origin: process.env.ALLOWED_ORIGIN ?? false,
+        methods: ['GET', 'POST'],
+      }
     : {
         origin: (_origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
           callback(null, true);

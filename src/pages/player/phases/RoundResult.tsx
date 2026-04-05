@@ -89,12 +89,14 @@ export function RoundResult() {
                           key={hint.playerId}
                           className={`
                             text-sm font-bold rounded-full px-3 py-1.5
-                            ${hint.isDuplicate
-                              ? 'bg-red-100 text-[var(--color-error)] line-through opacity-60'
-                              : 'bg-purple-100 text-[var(--color-primary)]'}
+                            ${hint.isDuplicate && hint.duplicateReason === 'synonym'
+                              ? 'bg-orange-100 text-orange-500 line-through opacity-60'
+                              : hint.isDuplicate
+                                ? 'bg-red-100 text-[var(--color-error)] line-through opacity-60'
+                                : 'bg-purple-100 text-[var(--color-primary)]'}
                           `}
                         >
-                          {hint.text}
+                          {hint.duplicateReason === 'synonym' ? '🔀 ' : ''}{hint.text}
                         </span>
                       ))}
                     </div>

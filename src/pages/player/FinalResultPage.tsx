@@ -24,6 +24,8 @@ const RANK_TEXT_STYLES: Record<number, string> = {
 
 const CONFETTI_COLORS = ['#7C3AED', '#06B6D4', '#EC4899', '#F59E0B', '#22C55E', '#EF4444'];
 
+const STAGGER_CLASSES = ['stagger-1', 'stagger-2', 'stagger-3', 'stagger-4', 'stagger-5', 'stagger-6'];
+
 function launchConfetti(container: HTMLElement) {
   const count = 60;
   for (let i = 0; i < count; i++) {
@@ -78,7 +80,7 @@ export function FinalResultPage() {
             key={team.teamId}
             className={`
               rounded-2xl p-5
-              animate-phase-enter stagger-${Math.min(index + 1, 6)}
+              animate-phase-enter ${STAGGER_CLASSES[Math.min(index, STAGGER_CLASSES.length - 1)]}
               ${RANK_CARD_STYLES[team.rank] ?? 'bg-white shadow-md border-2 border-gray-100'}
             `}
           >

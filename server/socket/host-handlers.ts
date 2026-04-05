@@ -110,6 +110,16 @@ export const registerHostHandlers = (
       return;
     }
 
+    // 移動先チームが存在するか確認
+    const toTeamExists = session.teams.some((t) => t.id === toTeamId);
+    if (!toTeamExists) {
+      socket.emit('error', {
+        code: 'INVALID_TEAM',
+        message: '移動先のチームが見つかりません',
+      });
+      return;
+    }
+
     // プレイヤーの現在のチームを探す
     const fromTeam = session.teams.find((t) => t.memberIds.includes(playerId));
     if (!fromTeam) return;

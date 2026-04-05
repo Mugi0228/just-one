@@ -4,13 +4,21 @@ import type { ServerEvents, ClientEvents } from '@shared/types/events.js';
 import { GAME_CONFIG } from '@shared/constants/game-config.js';
 import type { GameSession, TeamRoundState } from './session-manager.js';
 import { updateSession, getSession, getSocketIdByPlayerId } from './session-manager.js';
-import { checkDuplicateHints } from './hint-checker.js';
+import { checkDuplicateHints, mergeSynonymDuplicates } from './hint-checker.js';
+import { checkSynonyms } from './synonym-checker.js';
 import { calculateRoundScore } from './scorer.js';
 import { scheduleBotHints, scheduleBotAnswers } from './bot-scheduler.js';
 import { cancelBotTimeouts } from './bot-timeout-registry.js';
 import { createTopicProvider } from './topic-provider.js';
 
 type AppServer = Server<ClientEvents, ServerEvents>;
+
+// ---------------------------------------------------------------
+// Double-execution guard for async finishHintWriting
+// ---------------------------------------------------------------
+
+/** 処理中のセッションコードを追跡し、finishHintWriting の二重実行を防ぐ */
+const processingHintWriting = new Set<string>();
 
 // ---------------------------------------------------------------
 // Timer helpers
@@ -228,7 +236,7 @@ const startHintWritingPhase = (io: AppServer, sessionCode: string): void => {
     io,
     sessionCode,
     GAME_CONFIG.HINT_WRITING_SECONDS,
-    () => finishHintWriting(io, sessionCode),
+    () => { finishHintWriting(io, sessionCode).catch(console.error); },
   );
 
   updateSession(sessionCode, (s) => ({ ...s, timerId }));
@@ -294,7 +302,7 @@ export const submitHint = (
   // 全チームで全員提出済みなら早期完了
   const updatedSession = getSession(sessionCode);
   if (updatedSession && allHintsSubmitted(updatedSession)) {
-    finishHintWriting(io, sessionCode);
+    finishHintWriting(io, sessionCode).catch(console.error);
   }
 };
 
@@ -311,25 +319,52 @@ const allHintsSubmitted = (session: GameSession): boolean =>
 
 /**
  * ヒント記入フェーズを終了し、被りチェックフェーズへ進む。
+ * 完全一致チェック後、Claude Haiku で同義語チェックを非同期実行する。
  */
-const finishHintWriting = (io: AppServer, sessionCode: string): void => {
+const finishHintWriting = async (io: AppServer, sessionCode: string): Promise<void> => {
   const session = getSession(sessionCode);
   if (!session) return;
-  // 既にフェーズが進んでいる場合は何もしない（二重実行防止）
+  // 既にフェーズが進んでいる場合は何もしない（フェーズ確認）
   if (session.phase !== 'HINT_WRITING') return;
+  // async 待機中の二重実行を防ぐ
+  if (processingHintWriting.has(sessionCode)) return;
+  processingHintWriting.add(sessionCode);
 
-  // 被り判定
-  const checkedTeamRoundStates = session.teamRoundStates.map((trs) => ({
-    ...trs,
-    checkedHints: checkDuplicateHints(trs.hints),
-  }));
+  try {
+    // タイマーを即座にクリア（async 待機前に）
+    updateSession(sessionCode, (s) => clearSessionTimer(s));
 
-  updateSession(sessionCode, (s) => ({
-    ...clearSessionTimer(s),
-    teamRoundStates: checkedTeamRoundStates,
-  }));
+    // 完全一致チェック（同期）
+    const exactCheckedStates = session.teamRoundStates.map((trs) => ({
+      ...trs,
+      checkedHints: checkDuplicateHints(trs.hints),
+    }));
 
-  startHintCheckingPhase(io, sessionCode);
+    // 同義語チェック（async、チームごとに並列実行）
+    const synonymCheckedStates = await Promise.all(
+      exactCheckedStates.map(async (trs) => {
+        const nonDuplicateHints = trs.checkedHints.filter((h) => !h.isDuplicate);
+        if (nonDuplicateHints.length < 2) return trs;
+        const synonymResult = await checkSynonyms(
+          nonDuplicateHints.map((h) => h.text),
+          trs.topic,
+        );
+        return {
+          ...trs,
+          checkedHints: mergeSynonymDuplicates(trs.checkedHints, synonymResult),
+        };
+      }),
+    );
+
+    updateSession(sessionCode, (s) => ({
+      ...s,
+      teamRoundStates: synonymCheckedStates,
+    }));
+
+    startHintCheckingPhase(io, sessionCode);
+  } finally {
+    processingHintWriting.delete(sessionCode);
+  }
 };
 
 // ---------------------------------------------------------------
@@ -360,6 +395,7 @@ const startHintCheckingPhase = (io: AppServer, sessionCode: string): void => {
         playerName: player?.name ?? 'Unknown',
         text: h.text,
         isDuplicate: h.isDuplicate,
+        duplicateReason: h.duplicateReason,
       };
     });
 
@@ -544,6 +580,7 @@ const showRoundResult = (io: AppServer, sessionCode: string): void => {
         playerName: player?.name ?? 'Unknown',
         text: h.text,
         isDuplicate: h.isDuplicate,
+        duplicateReason: h.duplicateReason,
       };
     });
 
@@ -670,6 +707,7 @@ export const buildFinalResults = (session: GameSession): TeamFinalResult[] => {
           playerName: player?.name ?? 'Unknown',
           text: h.text,
           isDuplicate: h.isDuplicate,
+          duplicateReason: h.duplicateReason,
         };
       });
 
@@ -763,6 +801,7 @@ export const overrideResult = (
         playerName: player?.name ?? 'Unknown',
         text: h.text,
         isDuplicate: h.isDuplicate,
+        duplicateReason: h.duplicateReason,
       };
     });
 

@@ -31,12 +31,16 @@ export interface Team {
   readonly memberIds: readonly string[];
 }
 
+/** 被り判定の理由 */
+export type DuplicateReason = 'exact' | 'synonym';
+
 /** ヒント */
 export interface Hint {
   readonly playerId: string;
   readonly text: string;
   readonly rawText: string;
   readonly isDuplicate: boolean;
+  readonly duplicateReason?: DuplicateReason;
 }
 
 /** 公開用ヒント（回答者に見せる形） */
@@ -45,6 +49,7 @@ export interface RevealedHint {
   readonly playerName: string;
   readonly text: string;
   readonly isDuplicate: boolean;
+  readonly duplicateReason?: DuplicateReason;
 }
 
 /** チームのラウンド状態（クライアント送信用） */

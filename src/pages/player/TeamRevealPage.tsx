@@ -312,7 +312,7 @@ function PlayerChip({ player, playerIndex, draggable, isMe, isHost, currentTeamI
         onTouchEnd={draggable ? handleTouchEnd : undefined}
         onTouchCancel={draggable ? handleTouchCancel : undefined}
         className={`
-          flex items-center gap-2 rounded-xl px-3 py-1.5
+          flex items-center gap-2 rounded-xl px-3 py-1.5 min-h-[44px]
           bg-white shadow-sm border-2
           ${isMe ? 'border-[var(--color-primary)] bg-purple-50' : 'border-gray-100'}
           ${draggable ? 'cursor-grab active:cursor-grabbing hover:scale-105 hover:shadow-md touch-none' : ''}
@@ -335,7 +335,7 @@ function PlayerChip({ player, playerIndex, draggable, isMe, isHost, currentTeamI
               e.stopPropagation();
               setShowMoveMenu(!showMoveMenu);
             }}
-            className="ml-1 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 active:bg-gray-300 flex items-center justify-center text-sm text-gray-500 transition-colors touch-manipulation"
+            className="ml-1 w-11 h-11 rounded-full bg-gray-100 hover:bg-gray-200 active:bg-gray-300 flex items-center justify-center text-sm text-gray-500 transition-colors touch-manipulation"
             title="チームを移動"
           >
             ↔
