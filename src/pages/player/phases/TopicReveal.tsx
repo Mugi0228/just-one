@@ -12,7 +12,7 @@ export function TopicReveal() {
         totalTime={GAME_CONFIG.TOPIC_REVEAL_SECONDS}
       />
 
-      <div className="bg-white rounded-2xl shadow-md p-8 text-center w-full relative overflow-hidden animate-bounce-in">
+      <div className="bg-white rounded-2xl shadow-md p-8 text-center w-full relative animate-bounce-in">
         {/* Sparkle decorations */}
         <span className="absolute top-3 left-4 text-2xl opacity-60">✨</span>
         <span className="absolute top-2 right-5 text-xl opacity-40">✨</span>

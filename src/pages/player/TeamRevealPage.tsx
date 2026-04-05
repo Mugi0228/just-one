@@ -328,7 +328,7 @@ function PlayerChip({ player, playerIndex, draggable, isMe, isHost, currentTeamI
         >
           {player.isBot ? '🤖' : player.name.charAt(0)}
         </div>
-        <span className="text-sm font-bold text-gray-700">{player.name}</span>
+        <span className="text-sm font-bold text-gray-700 max-w-[8rem] truncate">{player.name}</span>
         {isHost && otherTeams.length > 0 && (
           <button
             onClick={(e) => {

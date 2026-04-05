@@ -16,7 +16,7 @@ export function GamePage() {
     state.isHost &&
     state.progressionMode === 'manual' &&
     MANUAL_CONTROL_PHASES.has(state.phase);
-  const bottomPad = hasHostControls ? 'pb-28' : 'pb-16';
+  const bottomPad = hasHostControls ? 'pb-36' : 'pb-24';
 
   return (
     <div className={`flex flex-col gap-4 ${bottomPad}`}>

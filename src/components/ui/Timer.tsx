@@ -43,7 +43,6 @@ export function Timer({ timeRemaining, totalTime }: TimerProps) {
       <span
         className={`absolute text-xl font-extrabold ${textColor} transition-colors duration-300`}
       >
-        {isUrgent && timeRemaining > 0 ? '\u23F0 ' : ''}
         {timeRemaining}
       </span>
     </div>

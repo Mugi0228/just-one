@@ -34,7 +34,7 @@ function ConnectionIndicator() {
   const label = status === 'connected' ? '✓ 接続できました' : '⏳ 接続中...';
 
   return (
-    <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center pointer-events-none">
+    <div className="fixed bottom-20 left-0 right-0 z-50 flex justify-center pointer-events-none">
       <div className={`text-sm font-bold py-2 px-5 rounded-full shadow-lg ${bg}`}>
         {label}
       </div>

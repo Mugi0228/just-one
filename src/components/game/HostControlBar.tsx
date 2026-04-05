@@ -39,7 +39,7 @@ export function HostControlBar() {
   if (!showScores && !showHostControls) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-10">
+    <div className="fixed bottom-0 left-0 right-0 z-30">
       <div className="bg-white shadow-[0_-4px_12px_rgba(0,0,0,0.08)] rounded-t-2xl">
         <div
           className="max-w-xl mx-auto"
@@ -154,25 +154,25 @@ function TeamAssignmentControls() {
   }
 
   return (
-    <div className="flex items-center justify-center gap-3">
+    <div className="flex flex-wrap items-center justify-center gap-2">
       <Button
         onClick={() => socket.emit('host:back-to-lobby')}
         variant="secondary"
-        className="text-sm px-4 py-2"
+        className="text-sm px-3 py-2"
       >
         ← ロビーに戻る
       </Button>
       <Button
         onClick={() => socket.emit('host:start-team-shuffle')}
         variant="secondary"
-        className="text-sm px-4 py-2"
+        className="text-sm px-3 py-2"
       >
         シャッフルし直す
       </Button>
       <Button
         onClick={handleStartGame}
         disabled={isStarting}
-        className="text-sm px-4 py-2"
+        className="text-sm px-3 py-2"
       >
         {isStarting ? '開始中...' : 'ゲーム開始'}
       </Button>

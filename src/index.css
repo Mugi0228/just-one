@@ -73,6 +73,9 @@ input, textarea {
   height: 1px;
   bottom: -1px;
 }
+.btn-3d:disabled::after {
+  display: none;
+}
 
 /* Bounce animation */
 @keyframes bounce-in {
