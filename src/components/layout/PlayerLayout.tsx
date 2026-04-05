@@ -45,8 +45,8 @@ function ConnectionIndicator() {
 export function PlayerLayout({ children, hideHeader = false, centerContent = false }: PlayerLayoutProps) {
   return (
     <div
-      className="flex flex-col bg-[var(--color-bg)] relative overflow-x-hidden overflow-y-auto"
-      style={{ minHeight: '100%', paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
+      className="layout-full-height flex flex-col bg-[var(--color-bg)] relative overflow-x-hidden overflow-y-auto"
+      style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       {/* Decorative gradient blobs (全ページ共通) */}
       <div className="pointer-events-none fixed inset-0 z-0">
