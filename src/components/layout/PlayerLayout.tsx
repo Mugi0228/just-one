@@ -45,7 +45,7 @@ function ConnectionIndicator() {
 export function PlayerLayout({ children, hideHeader = false, centerContent = false }: PlayerLayoutProps) {
   return (
     <div
-      className="layout-full-height flex flex-col bg-[var(--color-bg)] relative overflow-x-hidden overflow-y-auto"
+      className="layout-full-height flex flex-col bg-[var(--color-bg)] relative overflow-hidden"
       style={{
         paddingTop: 'env(safe-area-inset-top)',
         paddingBottom: 'env(safe-area-inset-bottom)',
@@ -71,7 +71,7 @@ export function PlayerLayout({ children, hideHeader = false, centerContent = fal
         </header>
       )}
       <ConnectionIndicator />
-      <main className={`relative z-10 flex-1 flex flex-col items-center px-4 py-6 pb-8 ${centerContent ? 'justify-center' : ''}`}>
+      <main className={`relative z-10 flex-1 flex flex-col items-center px-4 py-6 pb-8 overflow-y-auto ${centerContent ? 'justify-center' : ''}`}>
         <div className="w-full max-w-lg">{children}</div>
       </main>
     </div>
