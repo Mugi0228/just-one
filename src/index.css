@@ -22,8 +22,10 @@ html {
 }
 
 body {
-  @apply bg-[var(--color-bg)] text-gray-800 antialiased;
+  @apply text-gray-800 antialiased;
   font-family: 'Nunito', sans-serif;
+  background-color: var(--color-bg);
+  background-image: linear-gradient(170deg, rgba(196,181,253,0.3) 0%, transparent 45%, rgba(147,197,253,0.25) 100%);
   min-height: 100vh;
   min-height: -webkit-fill-available;
   overscroll-behavior: none;
