@@ -56,7 +56,7 @@ export function PlayerLayout({ children, hideHeader = false, centerContent = fal
       style={{
         paddingTop: 'env(safe-area-inset-top)',
         paddingBottom: 'env(safe-area-inset-bottom)',
-        backgroundImage: 'linear-gradient(170deg, rgba(196,181,253,0.3) 0%, transparent 45%, rgba(147,197,253,0.25) 100%)',
+        backgroundImage: 'var(--bg-gradient)',
       }}
     >
       {/* Decorative gradient blobs */}
