@@ -40,10 +40,10 @@ body {
 }
 
 /* Full-screen layout container
-   --app-height は main.tsx で window.innerHeight から設定（iOS PWA で最も信頼性が高い）
-   フォールバック: 100dvh → -webkit-fill-available → 100vh */
+   window.innerHeight はセーフエリアを含まないため env(safe-area-inset-bottom) を加算して
+   PlayerLayout がホームインジケーター領域まで確実にカバーするようにする */
 .layout-full-height {
-  height: var(--app-height, 100dvh);
+  height: calc(var(--app-height, 100dvh) + env(safe-area-inset-bottom));
 }
 
 /* Allow text selection in inputs */
