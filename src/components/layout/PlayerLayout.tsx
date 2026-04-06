@@ -16,14 +16,12 @@ function ConnectionIndicator() {
   useEffect(() => {
     if (prevStatusRef.current !== null && prevStatusRef.current !== 'connected' && status === 'connected') {
       if (!hasConnectedOnce.current) {
-        // 初回接続のみバナーを表示
         hasConnectedOnce.current = true;
         setShowSuccess(true);
         const timer = setTimeout(() => setShowSuccess(false), 5000);
         prevStatusRef.current = status;
         return () => clearTimeout(timer);
       }
-      // 再接続時はバナーなしで静かに復帰
     }
     prevStatusRef.current = status;
   }, [status]);
@@ -44,36 +42,43 @@ function ConnectionIndicator() {
 
 export function PlayerLayout({ children, hideHeader = false, centerContent = false }: PlayerLayoutProps) {
   return (
+    // fixed inset-0 で JS計算なしに画面全体（セーフエリア含む）を確実にカバー
     <div
-      className="layout-full-height flex flex-col bg-[var(--color-bg)] relative overflow-hidden"
+      className="fixed inset-0 flex flex-col bg-[var(--color-bg)] overflow-hidden"
       style={{
-        paddingTop: 'env(safe-area-inset-top)',
-        paddingBottom: 'env(safe-area-inset-bottom)',
         backgroundImage: 'linear-gradient(170deg, rgba(196,181,253,0.3) 0%, transparent 45%, rgba(147,197,253,0.25) 100%)',
       }}
     >
-      {/* Decorative gradient blobs (全ページ共通) */}
-      <div className="pointer-events-none fixed inset-0 z-0">
+      {/* Decorative gradient blobs */}
+      <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute -top-32 -left-32 w-[28rem] h-[28rem] bg-purple-400 rounded-full opacity-40 blur-[80px]" />
         <div className="absolute top-1/4 -right-32 w-[32rem] h-[32rem] bg-cyan-300 rounded-full opacity-35 blur-[80px]" />
         <div className="absolute bottom-10 -left-16 w-[24rem] h-[24rem] bg-pink-300 rounded-full opacity-35 blur-[80px]" />
         <div className="absolute -bottom-24 -right-24 w-[26rem] h-[26rem] bg-purple-300 rounded-full opacity-30 blur-[80px]" />
       </div>
 
-      {!hideHeader && (
-        <header
-          className="relative z-10 bg-white/80 backdrop-blur-sm shadow-md px-4 py-3"
-          style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}
-        >
-          <h1 className="text-center text-2xl font-extrabold text-[var(--color-primary)]">
-            Just One
-          </h1>
-        </header>
-      )}
-      <ConnectionIndicator />
-      <main className={`relative z-10 flex-1 flex flex-col items-center px-4 py-6 pb-8 overflow-y-auto ${centerContent ? 'justify-center' : ''}`}>
-        <div className="w-full max-w-lg">{children}</div>
-      </main>
+      {/* セーフエリア分を内側paddingで確保 */}
+      <div
+        className="flex flex-col flex-1 min-h-0"
+        style={{
+          paddingTop: 'env(safe-area-inset-top)',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+          paddingLeft: 'env(safe-area-inset-left)',
+          paddingRight: 'env(safe-area-inset-right)',
+        }}
+      >
+        {!hideHeader && (
+          <header className="relative z-10 bg-white/80 backdrop-blur-sm shadow-md px-4 py-3">
+            <h1 className="text-center text-2xl font-extrabold text-[var(--color-primary)]">
+              Just One
+            </h1>
+          </header>
+        )}
+        <ConnectionIndicator />
+        <main className={`relative z-10 flex-1 flex flex-col items-center px-4 py-6 pb-8 overflow-y-auto ${centerContent ? 'justify-center' : ''}`}>
+          <div className="w-full max-w-lg">{children}</div>
+        </main>
+      </div>
     </div>
   );
 }
