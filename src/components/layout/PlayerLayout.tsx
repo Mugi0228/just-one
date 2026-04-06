@@ -42,29 +42,31 @@ function ConnectionIndicator() {
 
 export function PlayerLayout({ children, hideHeader = false, centerContent = false }: PlayerLayoutProps) {
   return (
-    // fixed inset-0 で JS計算なしに画面全体（セーフエリア含む）を確実にカバー
+    /*
+     * fixed inset-0: JS高さ計算なしに画面全体（セーフエリア含む）を確実にカバー。
+     * overflow は設定しない: fixed 要素はViewport外に描画されないため不要。
+     * かつ overflow:hidden にすると fixed な子要素（blobs）がクリップされる不具合を防ぐ。
+     */
     <div
-      className="fixed inset-0 flex flex-col bg-[var(--color-bg)] overflow-hidden"
+      className="fixed inset-0 flex flex-col bg-[var(--color-bg)]"
       style={{
         backgroundImage: 'linear-gradient(170deg, rgba(196,181,253,0.3) 0%, transparent 45%, rgba(147,197,253,0.25) 100%)',
       }}
     >
-      {/* Decorative gradient blobs */}
-      <div className="pointer-events-none absolute inset-0 z-0">
+      {/* Decorative gradient blobs — fixed inset-0 のまま維持（親がfixedでも子fixedはviewport基準） */}
+      <div className="pointer-events-none fixed inset-0 z-0">
         <div className="absolute -top-32 -left-32 w-[28rem] h-[28rem] bg-purple-400 rounded-full opacity-40 blur-[80px]" />
         <div className="absolute top-1/4 -right-32 w-[32rem] h-[32rem] bg-cyan-300 rounded-full opacity-35 blur-[80px]" />
         <div className="absolute bottom-10 -left-16 w-[24rem] h-[24rem] bg-pink-300 rounded-full opacity-35 blur-[80px]" />
         <div className="absolute -bottom-24 -right-24 w-[26rem] h-[26rem] bg-purple-300 rounded-full opacity-30 blur-[80px]" />
       </div>
 
-      {/* セーフエリア分を内側paddingで確保 */}
+      {/* セーフエリア分を内側paddingで確保。overflow-x-hidden で横はみ出しだけ防ぐ */}
       <div
-        className="flex flex-col flex-1 min-h-0"
+        className="flex flex-col flex-1 min-h-0 overflow-x-hidden"
         style={{
           paddingTop: 'env(safe-area-inset-top)',
           paddingBottom: 'env(safe-area-inset-bottom)',
-          paddingLeft: 'env(safe-area-inset-left)',
-          paddingRight: 'env(safe-area-inset-right)',
         }}
       >
         {!hideHeader && (
