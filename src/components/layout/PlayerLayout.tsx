@@ -45,12 +45,12 @@ function ConnectionIndicator() {
 export function PlayerLayout({ children, hideHeader = false, centerContent = false }: PlayerLayoutProps) {
   return (
     <div
-      className="layout-full-height flex flex-col bg-[var(--color-bg)] relative overflow-x-hidden overflow-y-auto"
+      className="layout-full-height flex flex-col relative overflow-x-hidden overflow-y-auto"
+      // DEBUG: PlayerLayout = yellow
       style={{
         paddingTop: 'env(safe-area-inset-top)',
         paddingBottom: 'env(safe-area-inset-bottom)',
-        // blob が届かない下部に薄いグラデーションを補完（blob は上に重なる）
-        backgroundImage: 'linear-gradient(170deg, rgba(196,181,253,0.3) 0%, transparent 45%, rgba(147,197,253,0.25) 100%)',
+        backgroundColor: 'yellow', // DEBUG: PlayerLayout
       }}
     >
       {/* Decorative gradient blobs (全ページ共通) */}

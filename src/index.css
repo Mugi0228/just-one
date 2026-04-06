@@ -19,12 +19,13 @@
 html {
   height: -webkit-fill-available;
   overscroll-behavior: none;
+  background-color: red; /* DEBUG: html */
 }
 
 body {
   @apply text-gray-800 antialiased;
   font-family: 'Nunito', sans-serif;
-  background-color: red;
+  background-color: blue; /* DEBUG: body */
   min-height: 100vh;
   min-height: -webkit-fill-available;
   overscroll-behavior: none;
@@ -36,6 +37,7 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
+  background-color: green; /* DEBUG: #root */
 }
 
 /* Full-screen layout container
