@@ -43,23 +43,20 @@ function ConnectionIndicator() {
 export function PlayerLayout({ children, hideHeader = false, centerContent = false }: PlayerLayoutProps) {
   return (
     /*
-     * layout-full-height = calc(window.innerHeight + env(safe-area-inset-bottom))
-     * → body がセーフエリアに透けても背景グラデーションが一致する高さをカバー
+     * fixed inset-0: JS の高さ計算を一切使わず画面全体（セーフエリア含む）を確実にカバー。
+     * window.innerHeight の挙動は iOS バージョンによって異なるため、
+     * JS 計算ベースのアプローチはバージョン依存の不具合を生む。
      *
-     * overflow-x-hidden のみ（y は設定しない）:
-     * - overflow: hidden / overflow-y: hidden は iOS Safari で fixed 子要素（blobs）の
-     *   レンダリングを壊すため使用しない
-     * - スクロールは <main> だけに任せることで TOP ページの誤スクロールを防ぐ
+     * ポイント:
+     * - overflow は設定しない: overflow:hidden は iOS Safari で fixed 子要素をクリップする
+     * - blobs は fixed inset-0 のまま: 親が fixed でも子の fixed は viewport 基準で描画される
+     * - セーフエリアは内側 wrapper の padding で管理
      */
     <div
-      className="layout-full-height flex flex-col bg-[var(--color-bg)] relative overflow-x-hidden"
-      style={{
-        paddingTop: 'env(safe-area-inset-top)',
-        paddingBottom: 'env(safe-area-inset-bottom)',
-        backgroundImage: 'var(--bg-gradient)',
-      }}
+      className="fixed inset-0 flex flex-col bg-[var(--color-bg)]"
+      style={{ backgroundImage: 'var(--bg-gradient)' }}
     >
-      {/* Decorative gradient blobs */}
+      {/* Decorative gradient blobs — fixed inset-0 維持（viewport 基準で描画） */}
       <div className="pointer-events-none fixed inset-0 z-0">
         <div className="absolute -top-32 -left-32 w-[28rem] h-[28rem] bg-purple-400 rounded-full opacity-40 blur-[80px]" />
         <div className="absolute top-1/4 -right-32 w-[32rem] h-[32rem] bg-cyan-300 rounded-full opacity-35 blur-[80px]" />
@@ -67,22 +64,26 @@ export function PlayerLayout({ children, hideHeader = false, centerContent = fal
         <div className="absolute -bottom-24 -right-24 w-[26rem] h-[26rem] bg-purple-300 rounded-full opacity-30 blur-[80px]" />
       </div>
 
-      {!hideHeader && (
-        <header
-          className="relative z-10 bg-white/80 backdrop-blur-sm shadow-md px-4 py-3"
-          style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}
-        >
-          <h1 className="text-center text-2xl font-extrabold text-[var(--color-primary)]">
-            Just One
-          </h1>
-        </header>
-      )}
-      <ConnectionIndicator />
-      {/* スクロールは main のみ。外側 div に overflow-y を持たせないことで
-          TOP ページのように内容が短い場面での誤スクロールを防ぐ */}
-      <main className={`relative z-10 flex-1 flex flex-col items-center px-4 py-6 pb-8 overflow-y-auto ${centerContent ? 'justify-center' : ''}`}>
-        <div className="w-full max-w-lg">{children}</div>
-      </main>
+      {/* セーフエリア分を内側 padding で確保。overflow-x-hidden で横はみ出しのみ防ぐ */}
+      <div
+        className="flex flex-col flex-1 min-h-0 overflow-x-hidden"
+        style={{
+          paddingTop: 'env(safe-area-inset-top)',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+        }}
+      >
+        {!hideHeader && (
+          <header className="relative z-10 bg-white/80 backdrop-blur-sm shadow-md px-4 py-3">
+            <h1 className="text-center text-2xl font-extrabold text-[var(--color-primary)]">
+              Just One
+            </h1>
+          </header>
+        )}
+        <ConnectionIndicator />
+        <main className={`relative z-10 flex-1 flex flex-col items-center px-4 py-6 pb-8 overflow-y-auto ${centerContent ? 'justify-center' : ''}`}>
+          <div className="w-full max-w-lg">{children}</div>
+        </main>
+      </div>
     </div>
   );
 }

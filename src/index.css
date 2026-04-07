@@ -41,11 +41,6 @@ body {
   flex-direction: column;
 }
 
-/* PlayerLayout の高さ。window.innerHeight はセーフエリア底を含まないため加算する */
-.layout-full-height {
-  height: calc(var(--app-height, 100dvh) + env(safe-area-inset-bottom));
-}
-
 /* Allow text selection in inputs */
 input, textarea {
   user-select: auto;
