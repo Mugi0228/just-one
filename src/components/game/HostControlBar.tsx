@@ -26,6 +26,8 @@ export function HostControlBar() {
     (HOST_CONTROL_PHASES.has(state.phase) ||
       (state.progressionMode === 'manual' && HOST_MANUAL_CONTROL_PHASES.has(state.phase)));
 
+  const showForceReset = state.isHost && inGamePhase;
+
   const scores = [...state.teams]
     .map((t) => ({
       teamId: t.id,
@@ -36,7 +38,7 @@ export function HostControlBar() {
 
   const showScores = inGamePhase && scores.length > 0;
 
-  if (!showScores && !showHostControls) return null;
+  if (!showScores && !showHostControls && !showForceReset) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-30">
@@ -78,6 +80,13 @@ export function HostControlBar() {
               className={`px-4 py-3 ${showScores ? 'border-t border-gray-100' : ''}`}
             >
               <HostControls />
+            </div>
+          )}
+
+          {/* Force reset — ゲーム中いつでもロビーに戻れる */}
+          {showForceReset && (
+            <div className={`px-4 py-2 ${showScores || showHostControls ? 'border-t border-gray-100' : ''}`}>
+              <ForceResetControl />
             </div>
           )}
         </div>
@@ -266,6 +275,50 @@ function RoundResultControls() {
       >
         {isLastRound ? '最終結果を表示' : '次のラウンドへ'}
       </Button>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Force Reset Control — ゲーム中にロビーへ強制リセット
+// ---------------------------------------------------------------------------
+
+function ForceResetControl() {
+  const [confirming, setConfirming] = useState(false);
+
+  function handleReset() {
+    socket.emit('host:play-again');
+    setConfirming(false);
+  }
+
+  if (confirming) {
+    return (
+      <div className="flex items-center justify-center gap-2">
+        <span className="text-xs text-gray-500 font-bold">本当にリセット？</span>
+        <button
+          onClick={handleReset}
+          className="text-xs font-extrabold text-white bg-red-500 rounded-full px-3 py-1"
+        >
+          リセット
+        </button>
+        <button
+          onClick={() => setConfirming(false)}
+          className="text-xs font-bold text-gray-400"
+        >
+          キャンセル
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center justify-center">
+      <button
+        onClick={() => setConfirming(true)}
+        className="text-xs text-gray-400 font-bold underline underline-offset-2"
+      >
+        ロビーに戻る
+      </button>
     </div>
   );
 }
