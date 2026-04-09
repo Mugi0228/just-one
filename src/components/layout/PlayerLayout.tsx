@@ -118,8 +118,8 @@ export function PlayerLayout({ children, hideHeader = false, centerContent = fal
           </header>
         )}
         <ConnectionIndicator />
-        <main className={`relative z-10 flex-1 flex flex-col items-center px-4 py-6 pb-8 overflow-y-auto ${centerContent ? 'justify-center' : ''}`}>
-          <div className="w-full max-w-lg">{children}</div>
+        <main className="relative z-10 flex-1 flex flex-col items-center px-4 py-6 pb-8 overflow-y-auto">
+          <div className="w-full max-w-lg flex-1 flex flex-col">{children}</div>
         </main>
       </div>
     </div>
