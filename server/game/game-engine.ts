@@ -676,10 +676,10 @@ export const buildFinalResults = (session: GameSession): TeamFinalResult[] => {
 
   const sorted = [...teamScores].sort((a, b) => b.totalScore - a.totalScore);
 
-  const rankings: TeamFinalResult[] = sorted.map((entry, index) => {
+  const rankings: TeamFinalResult[] = sorted.reduce<TeamFinalResult[]>((acc, entry, index) => {
     const rank =
       index > 0 && sorted[index - 1].totalScore === entry.totalScore
-        ? (rankings[index - 1]?.rank ?? index + 1)
+        ? (acc[index - 1]?.rank ?? index + 1)
         : index + 1;
 
     const roundResults: TeamRoundResult[] = session.roundHistory.map((roundStates) => {
@@ -725,14 +725,14 @@ export const buildFinalResults = (session: GameSession): TeamFinalResult[] => {
       };
     });
 
-    return {
+    return [...acc, {
       teamId: entry.teamId,
       teamName: entry.teamName,
       totalScore: entry.totalScore,
       rank,
       roundResults,
-    };
-  });
+    }];
+  }, []);
 
   return rankings;
 };
