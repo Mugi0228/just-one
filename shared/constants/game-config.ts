@@ -14,7 +14,7 @@ export const GAME_CONFIG = {
   /** ヒント記入時間（秒） */
   HINT_WRITING_SECONDS: 30,
   /** 被りチェック表示時間（秒） */
-  HINT_CHECKING_SECONDS: 20,
+  HINT_CHECKING_SECONDS: 10,
   /** 回答時間（秒） */
   ANSWERING_SECONDS: 60,
   /** ラウンド結果表示時間（秒） */
