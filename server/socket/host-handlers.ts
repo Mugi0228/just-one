@@ -133,18 +133,8 @@ export const registerHostHandlers = (
     if (!fromTeam) return;
     if (fromTeam.id === toTeamId) return; // 同じチーム内なら何もしない
 
-    // 移動元チームが1人になる場合は拒否
-    if (fromTeam.memberIds.length <= 1) {
-      socket.emit('error', {
-        code: 'TEAM_TOO_SMALL',
-        message: 'チームには最低1人必要です',
-      });
-      return;
-    }
-
-    const updated = updateSession(sessionCode, (s) => ({
-      ...s,
-      teams: s.teams.map((t) => {
+    const updated = updateSession(sessionCode, (s) => {
+      const movedTeams = s.teams.map((t) => {
         if (t.id === fromTeam.id) {
           return { ...t, memberIds: t.memberIds.filter((id) => id !== playerId) };
         }
@@ -152,8 +142,10 @@ export const registerHostHandlers = (
           return { ...t, memberIds: [...t.memberIds, playerId] };
         }
         return t;
-      }),
-    }));
+      });
+      // 空になったチームを削除
+      return { ...s, teams: movedTeams.filter((t) => t.memberIds.length > 0) };
+    });
 
     if (updated) {
       io.to(sessionCode).emit('session:teams-assigned', { teams: updated.teams });
