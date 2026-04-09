@@ -32,7 +32,7 @@ export interface Team {
 }
 
 /** 被り判定の理由 */
-export type DuplicateReason = 'exact' | 'synonym';
+export type DuplicateReason = 'exact' | 'synonym' | 'not-word';
 
 /** ヒント */
 export interface Hint {

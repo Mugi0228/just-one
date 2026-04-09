@@ -68,9 +68,11 @@ export function HintChecking() {
               animate-slide-in-right ${getStaggerClass(index)}
               ${hint.isDuplicate && hint.duplicateReason === 'synonym'
                 ? 'border-l-4 border-l-orange-400'
-                : hint.isDuplicate
-                  ? 'border-l-4 border-l-[var(--color-error)]'
-                  : 'border-l-4 border-l-[var(--color-success)]'}
+                : hint.isDuplicate && hint.duplicateReason === 'not-word'
+                  ? 'border-l-4 border-l-gray-400'
+                  : hint.isDuplicate
+                    ? 'border-l-4 border-l-[var(--color-error)]'
+                    : 'border-l-4 border-l-[var(--color-success)]'}
             `}
           >
             <div
@@ -88,6 +90,10 @@ export function HintChecking() {
             {hint.isDuplicate && hint.duplicateReason === 'synonym' ? (
               <span className="flex items-center gap-1 text-orange-500 text-xs font-extrabold">
                 🔀 <span>類義語</span>
+              </span>
+            ) : hint.isDuplicate && hint.duplicateReason === 'not-word' ? (
+              <span className="flex items-center gap-1 text-gray-400 text-xs font-extrabold">
+                🚫 <span>単語NG</span>
               </span>
             ) : hint.isDuplicate ? (
               <span className="text-lg">❌</span>
