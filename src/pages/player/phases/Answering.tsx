@@ -100,17 +100,29 @@ export function Answering() {
         </>
       )}
 
-      {/* Hint giver: waiting */}
+      {/* Hint giver: waiting or answer received */}
       {!isGuesser && (
-        <div className="bg-white rounded-2xl shadow-sm p-6 text-center w-full border-l-4 border-l-[var(--color-cyan)]">
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-xl">💡</span>
-            <p className="text-gray-500 font-bold">
-              回答者の答えを待っています
-              <span className="animate-pulse">...</span>
+        state.timeRemaining === 0 ? (
+          <div className="bg-green-50 border-2 border-[var(--color-success)] rounded-2xl p-6 text-center w-full">
+            <p className="text-3xl mb-2">✅</p>
+            <p className="text-[var(--color-success)] font-extrabold text-lg">
+              回答が完了しました！
+            </p>
+            <p className="text-gray-500 text-sm font-semibold mt-1">
+              司会者が答え合わせをします
             </p>
           </div>
-        </div>
+        ) : (
+          <div className="bg-white rounded-2xl shadow-sm p-6 text-center w-full border-l-4 border-l-[var(--color-cyan)]">
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-xl">💡</span>
+              <p className="text-gray-500 font-bold">
+                回答者の答えを待っています
+                <span className="animate-pulse">...</span>
+              </p>
+            </div>
+          </div>
+        )
       )}
     </div>
   );
