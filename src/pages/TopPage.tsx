@@ -28,7 +28,7 @@ export function TopPage() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-10">
+    <div className="flex flex-col items-center justify-center min-h-full gap-10">
       <div className="text-center">
         <h1 className="text-6xl font-extrabold text-[var(--color-primary)] mb-3 animate-bounce-in">
           Just One

@@ -36,7 +36,7 @@ function AppRouter() {
   // No session yet -> TopPage (create or join)
   if (routeKey === 'top') {
     return (
-      <PlayerLayout hideHeader centerContent>
+      <PlayerLayout hideHeader>
         <PhaseTransition phaseKey={routeKey}>
           <TopPage />
         </PhaseTransition>
