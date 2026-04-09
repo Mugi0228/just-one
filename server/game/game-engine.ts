@@ -534,7 +534,7 @@ const finishAnswering = (io: AppServer, sessionCode: string): void => {
     return;
   }
 
-  showRoundResult(io, sessionCode);
+  showRoundResult(io, sessionCode).catch(console.error);
 };
 
 /**
@@ -545,27 +545,29 @@ export const revealResult = (io: AppServer, sessionCode: string): void => {
   if (!session || session.phase !== 'ANSWERING') return;
 
   updateSession(sessionCode, (s) => clearSessionTimer(s));
-  showRoundResult(io, sessionCode);
+  showRoundResult(io, sessionCode).catch(console.error);
 };
 
 // ---------------------------------------------------------------
 // Phase: ROUND_RESULT
 // ---------------------------------------------------------------
 
-const showRoundResult = (io: AppServer, sessionCode: string): void => {
+const showRoundResult = async (io: AppServer, sessionCode: string): Promise<void> => {
   const session = getSession(sessionCode);
   if (!session) return;
 
-  // スコア計算
+  // スコア計算（Claude Haiku による類似判定を含む非同期処理）
   const newTotalScores = new Map(session.totalScores);
   const results: TeamRoundResult[] = [];
 
-  const scoredTeamRoundStates = session.teamRoundStates.map((trs) => {
-    const { isCorrect, allHintsUnique, score } = calculateRoundScore(
-      trs.answer,
-      trs.topic,
-      trs.checkedHints,
-    );
+  const scoreResults = await Promise.all(
+    session.teamRoundStates.map((trs) =>
+      calculateRoundScore(trs.answer, trs.topic, trs.checkedHints),
+    ),
+  );
+
+  const scoredTeamRoundStates = session.teamRoundStates.map((trs, i) => {
+    const { isCorrect, allHintsUnique, score } = scoreResults[i];
 
     const currentTotal = newTotalScores.get(trs.teamId) ?? 0;
     const newTotal = currentTotal + score;
