@@ -46,7 +46,7 @@ export default defineConfig({
         skipWaiting: true,
         clientsClaim: true,
         // Cache app shell only (HTML, CSS, JS, fonts)
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+        globPatterns: ['**/*.{js,css,ico,png,svg,woff,woff2}'],
         // Do NOT cache Socket.io requests
         navigateFallback: 'index.html',
         runtimeCaching: [
