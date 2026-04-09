@@ -525,6 +525,7 @@ const finishAnswering = (io: AppServer, sessionCode: string): void => {
   if (session.phase !== 'ANSWERING') return;
 
   updateSession(sessionCode, (s) => clearSessionTimer(s));
+  cancelBotTimeouts(sessionCode);
 
   if (session.progressionMode === 'manual') {
     // 手動モード: 結果表示せず、ホストの「答え合わせ」ボタンを待つ
@@ -682,6 +683,7 @@ export const buildFinalResults = (session: GameSession): TeamFinalResult[] => {
         ? (acc[index - 1]?.rank ?? index + 1)
         : index + 1;
 
+    let cumulativeScore = 0;
     const roundResults: TeamRoundResult[] = session.roundHistory.map((roundStates) => {
       const trs = roundStates.find((s) => s.teamId === entry.teamId);
       if (!trs) {
@@ -694,7 +696,7 @@ export const buildFinalResults = (session: GameSession): TeamFinalResult[] => {
           isCorrect: false,
           allHintsUnique: false,
           score: 0,
-          totalScore: 0,
+          totalScore: cumulativeScore,
           hints: [],
         };
       }
@@ -711,6 +713,8 @@ export const buildFinalResults = (session: GameSession): TeamFinalResult[] => {
         };
       });
 
+      cumulativeScore += trs.score;
+
       return {
         teamId: trs.teamId,
         teamName: entry.teamName,
@@ -720,7 +724,7 @@ export const buildFinalResults = (session: GameSession): TeamFinalResult[] => {
         isCorrect: trs.score > 0,
         allHintsUnique: trs.checkedHints.every((h) => !h.isDuplicate),
         score: trs.score,
-        totalScore: 0,
+        totalScore: cumulativeScore,
         hints,
       };
     });
@@ -868,8 +872,13 @@ export const resetGameToLobby = (io: AppServer, sessionCode: string): void => {
 
 /**
  * 現在のタイマー残り時間を取得する。
+ * ポーズ中は session.pausedTimeRemaining を返す。
  */
 export const getTimerRemaining = (sessionCode: string): number => {
+  const session = getSession(sessionCode);
+  if (session?.pausedTimeRemaining !== null && session?.pausedTimeRemaining !== undefined) {
+    return session.pausedTimeRemaining;
+  }
   const timerState = timerCallbacks.get(sessionCode);
   return timerState?.remaining ?? 0;
 };

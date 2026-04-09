@@ -30,7 +30,7 @@ export const scheduleBotHints = (
     });
 
     for (const botId of botHinterIds) {
-      const delay = 8000 + Math.floor(Math.random() * 17000);
+      const delay = 5000 + Math.floor(Math.random() * 10000);
       const handle = setTimeout(() => {
         untrackBotTimeout(sessionCode, handle);
         const currentSession = getSession(sessionCode);

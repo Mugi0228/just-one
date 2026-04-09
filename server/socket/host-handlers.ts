@@ -53,6 +53,14 @@ export const registerHostHandlers = (
       return;
     }
 
+    if (progressionMode !== 'auto' && progressionMode !== 'manual') {
+      socket.emit('error', {
+        code: 'INVALID_PROGRESSION_MODE',
+        message: '無効な進行モードです',
+      });
+      return;
+    }
+
     const clampedRounds = Math.min(20, Math.max(1, Math.floor(totalRounds ?? 7)));
     const session = createSession(socket.id, validation.sanitized, progressionMode, clampedRounds);
     const hostPlayer = session.players[0];

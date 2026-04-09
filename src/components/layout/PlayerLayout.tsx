@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, type ReactNode } from 'react';
-import { useConnectionStatus, type ConnectionStatus } from '@/hooks/useConnectionStatus';
+import { useConnectionStatus } from '@/hooks/useConnectionStatus';
 
 interface PlayerLayoutProps {
   readonly children: ReactNode;
@@ -7,29 +7,56 @@ interface PlayerLayoutProps {
   readonly centerContent?: boolean;
 }
 
+// モジュールレベル: コンポーネント再マウントをまたいで持続する
+// 「接続中...」バナーが出た切断サイクルかどうかを追跡する
+let isShowingConnectingBanner = false;
+
 function ConnectionIndicator() {
   const status = useConnectionStatus();
-  const [showSuccess, setShowSuccess] = useState(false);
-  const prevStatusRef = useRef<ConnectionStatus | null>(null);
-  const hasConnectedOnce = useRef(false);
+  const [visible, setVisible] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(true);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (prevStatusRef.current !== null && prevStatusRef.current !== 'connected' && status === 'connected') {
-      if (!hasConnectedOnce.current) {
-        hasConnectedOnce.current = true;
-        setShowSuccess(true);
-        const timer = setTimeout(() => setShowSuccess(false), 5000);
-        prevStatusRef.current = status;
-        return () => clearTimeout(timer);
+    const clearTimer = () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+
+    if (status !== 'connected') {
+      clearTimer();
+      // 1.5秒以上切断が続いた場合のみバナーを表示（瞬断はスキップ）
+      timerRef.current = setTimeout(() => {
+        timerRef.current = null;
+        isShowingConnectingBanner = true;
+        setIsConnecting(true);
+        setVisible(true);
+      }, 1500);
+    } else {
+      clearTimer();
+      if (isShowingConnectingBanner) {
+        // 「接続中...」を表示していた → 「接続できました」に切り替えて3秒後に非表示
+        setIsConnecting(false);
+        setVisible(true);
+        timerRef.current = setTimeout(() => {
+          timerRef.current = null;
+          setVisible(false);
+          isShowingConnectingBanner = false;
+        }, 3000);
+      } else {
+        setVisible(false);
       }
     }
-    prevStatusRef.current = status;
+
+    return clearTimer;
   }, [status]);
 
-  if (status === 'connected' && !showSuccess) return null;
+  if (!visible) return null;
 
-  const bg = status === 'connected' ? 'bg-green-500 text-white' : 'bg-black/70 text-white';
-  const label = status === 'connected' ? '✓ 接続できました' : '⏳ 接続中...';
+  const bg = isConnecting ? 'bg-black/70 text-white' : 'bg-green-500 text-white';
+  const label = isConnecting ? '⏳ 接続中...' : '✓ 接続できました';
 
   return (
     <div className="fixed bottom-20 left-0 right-0 z-50 flex justify-center pointer-events-none">

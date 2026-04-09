@@ -255,7 +255,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         action.code === 'SESSION_NOT_FOUND' ||
         action.code === 'PLAYER_NOT_FOUND' ||
         action.code === 'INVALID_TOKEN' ||
-        action.message.includes('ホストが切断');
+        action.code === 'HOST_DISCONNECTED';
       if (isFatalError) {
         localStorage.removeItem('just-one-token');
         localStorage.removeItem('just-one-session');
@@ -436,6 +436,15 @@ export function GameProvider({ children }: GameProviderProps) {
       dispatch({ type: 'ERROR', code, message });
     });
 
+    function handleReconnectFailed() {
+      dispatch({
+        type: 'ERROR',
+        code: 'CONNECTION_FAILED',
+        message: '接続に失敗しました。ページを再読み込みしてください。',
+      });
+    }
+    s.io.on('reconnect_failed', handleReconnectFailed);
+
     return () => {
       s.off('session:created');
       s.off('session:joined');
@@ -452,6 +461,7 @@ export function GameProvider({ children }: GameProviderProps) {
       s.off('session:game-reset');
       s.off('session:state-sync');
       s.off('error');
+      s.io.off('reconnect_failed', handleReconnectFailed);
     };
   }, []);
 

@@ -45,11 +45,19 @@ const tokenStore = new Map<string, { readonly sessionCode: string; readonly play
 
 /**
  * ルームトークンを作成し、保存する。
+ * 同じプレイヤーの既存トークンを削除してから新しいトークンを生成する。
  */
 export const createSessionToken = (
   sessionCode: string,
   playerId: string,
 ): string => {
+  // 同じプレイヤーの既存トークンを削除（古いトークンによる再接続ループを防ぐ）
+  for (const [existingToken, data] of tokenStore) {
+    if (data.sessionCode === sessionCode && data.playerId === playerId) {
+      tokenStore.delete(existingToken);
+      break;
+    }
+  }
   const token = nanoid();
   tokenStore.set(token, { sessionCode, playerId });
   return token;

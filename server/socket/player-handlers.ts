@@ -11,6 +11,7 @@ import {
 } from '../game/session-manager.js';
 import { submitHint, submitAnswer, getTimerRemaining, buildFinalResults } from '../game/game-engine.js';
 import { validatePlayerName, validateHint, validateAnswer } from '../utils/validation.js';
+import { GAME_CONFIG } from '@shared/constants/game-config.js';
 import { nanoid } from 'nanoid';
 import { hostSessionMap } from './host-handlers.js';
 import { cancelHostDisconnectTimer } from './disconnect-timers.js';
@@ -70,6 +71,14 @@ export const registerPlayerHandlers = (
       socket.emit('error', {
         code: 'GAME_IN_PROGRESS',
         message: 'ゲームは既に開始されています',
+      });
+      return;
+    }
+
+    if (session.players.length >= GAME_CONFIG.MAX_PLAYERS) {
+      socket.emit('error', {
+        code: 'ROOM_FULL',
+        message: 'ルームが満員です',
       });
       return;
     }

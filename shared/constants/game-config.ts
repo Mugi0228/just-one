@@ -33,4 +33,6 @@ export const GAME_CONFIG = {
   MAX_ANSWER_LENGTH: 50,
   /** ボットの最大数 */
   MAX_BOTS: 27,
+  /** ルームの最大人数（チーム最大数 × チーム最大人数） */
+  MAX_PLAYERS: 28,
 } as const;
