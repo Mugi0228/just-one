@@ -53,7 +53,7 @@ export function TopPage() {
 
       <div className="w-full max-w-xs">
         <RulesAccordion />
-        <p className="text-center text-gray-400 text-xs font-bold mt-2">v1.2.0</p>
+        <p className="text-center text-gray-400 text-xs font-bold mt-2">v1.2.1</p>
       </div>
     </div>
   );

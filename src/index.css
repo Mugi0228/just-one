@@ -21,6 +21,8 @@
 html {
   height: -webkit-fill-available;
   overscroll-behavior: none;
+  /* iOS overscroll領域に白帯が出ないよう、グラデーション末端の紫を設定 */
+  background-color: #DFD8F6;
 }
 
 body {
