@@ -251,14 +251,16 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     case 'ERROR': {
       // Clear session token when the session no longer exists or player is gone,
       // so the next reconnect doesn't loop on an invalid token.
-      if (
+      const isFatalError =
         action.code === 'SESSION_NOT_FOUND' ||
         action.code === 'PLAYER_NOT_FOUND' ||
         action.code === 'INVALID_TOKEN' ||
-        action.message.includes('ホストが切断')
-      ) {
+        action.message.includes('ホストが切断');
+      if (isFatalError) {
         localStorage.removeItem('just-one-token');
         localStorage.removeItem('just-one-session');
+        // 状態をリセットしてトップページに戻す
+        return { ...initialState, error: action.message };
       }
       return { ...state, error: action.message };
     }
