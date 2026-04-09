@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --color-bg: #F5F5F0;
+  --color-bg: #EDE9FE;
   --color-card: #FFFFFF;
   --color-primary: #7C3AED;
   --color-primary-dark: #6D28D9;
@@ -21,14 +21,13 @@
 html {
   height: -webkit-fill-available;
   overscroll-behavior: none;
-  /* iOS overscroll領域に白帯が出ないよう、グラデーション末端の紫を設定 */
-  background-color: #DFD8F6;
+  background-color: #EDE9FE;
 }
 
 body {
   @apply text-gray-800 antialiased;
   font-family: 'Nunito', sans-serif;
-  background-color: var(--color-bg);
+  background-color: #EDE9FE;
   background-image: var(--bg-gradient);
   min-height: 100vh;
   min-height: -webkit-fill-available;

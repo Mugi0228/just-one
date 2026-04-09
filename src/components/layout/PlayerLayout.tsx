@@ -79,21 +79,13 @@ export function PlayerLayout({ children, hideHeader = false, centerContent = fal
      * - blobs は fixed inset-0 のまま: 親が fixed でも子の fixed は viewport 基準で描画される
      * - セーフエリアは内側 wrapper の padding で管理
      */
-    <div className="fixed inset-0 flex flex-col">
-      {/* オーバーサイズ背景 — 150vmax の正方形を中央配置することで
-          iOS バージョン差によるビューポート計算のズレを完全吸収する */}
-      <div
-        className="pointer-events-none fixed z-0"
-        style={{
-          width: '150vmax',
-          height: '150vmax',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          backgroundColor: 'var(--color-bg)',
-          backgroundImage: 'var(--bg-gradient)',
-        }}
-      />
+    <div
+      className="fixed inset-0 flex flex-col"
+      style={{
+        backgroundColor: 'var(--color-bg)',
+        backgroundImage: 'var(--bg-gradient)',
+      }}
+    >
       {/* Decorative gradient blobs — fixed inset-0 維持（viewport 基準で描画） */}
       <div className="pointer-events-none fixed inset-0 z-0">
         <div className="absolute -top-32 -left-32 w-[28rem] h-[28rem] bg-purple-400 rounded-full opacity-40 blur-[80px]" />
