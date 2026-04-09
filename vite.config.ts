@@ -43,6 +43,8 @@ export default defineConfig({
         ],
       },
       workbox: {
+        skipWaiting: true,
+        clientsClaim: true,
         // Cache app shell only (HTML, CSS, JS, fonts)
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
         // Do NOT cache Socket.io requests
