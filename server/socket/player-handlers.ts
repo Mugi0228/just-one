@@ -230,8 +230,11 @@ export const registerPlayerHandlers = (
       }
     }
 
-    // Get current topic (hide from guessers)
-    const topic = isGuesser ? '' : (updatedSession.teamRoundStates[0]?.topic ?? '');
+    // Get current topic (hide from guessers, use player's own team's topic)
+    const myTrs = myTeam
+      ? updatedSession.teamRoundStates.find((t) => t.teamId === myTeam.id)
+      : undefined;
+    const topic = isGuesser ? '' : (myTrs?.topic ?? '');
 
     // Round results
     const roundResults = updatedSession.phase === 'ROUND_RESULT'

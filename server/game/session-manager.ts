@@ -160,6 +160,12 @@ export const deleteSession = (code: string): boolean => {
       tokenStore.delete(token);
     }
   }
+  // playerToSocketMap のエントリを削除してメモリリークを防ぐ
+  if (session) {
+    for (const player of session.players) {
+      playerToSocketMap.delete(player.id);
+    }
+  }
   return sessions.delete(code);
 };
 

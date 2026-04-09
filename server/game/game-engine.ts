@@ -781,10 +781,17 @@ export const overrideResult = (
   const currentTotal = newTotalScores.get(teamId) ?? 0;
   newTotalScores.set(teamId, currentTotal + scoreDiff);
 
+  // roundHistory の最終ラウンドも更新してスコアを同期する
+  const updatedRoundHistory = session.roundHistory.map((round, i) => {
+    if (i !== session.roundHistory.length - 1) return round;
+    return round.map((t) => t.teamId === teamId ? { ...t, score: newScore } : t);
+  });
+
   updateSession(sessionCode, (s) => ({
     ...s,
     teamRoundStates: updatedTeamRoundStates,
     totalScores: newTotalScores,
+    roundHistory: updatedRoundHistory,
   }));
 
   // Rebuild and re-broadcast results
