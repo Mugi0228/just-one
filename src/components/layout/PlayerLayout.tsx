@@ -106,8 +106,8 @@ export function PlayerLayout({ children, hideHeader = false, centerContent = fal
       <div
         className="flex flex-col flex-1 min-h-0 overflow-x-hidden"
         style={{
-          paddingTop: 'env(safe-area-inset-top)',
-          paddingBottom: 'env(safe-area-inset-bottom)',
+          paddingTop: 'max(env(safe-area-inset-top), 0.75rem)',
+          paddingBottom: 'max(env(safe-area-inset-bottom), 0.5rem)',
         }}
       >
         {!hideHeader && (
