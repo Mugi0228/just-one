@@ -6,6 +6,15 @@ import { dirname, join } from 'node:path';
 import type { ClientEvents, ServerEvents } from '@shared/types/events.js';
 import { registerSocketHandlers } from './socket/handler.js';
 
+// プロセス全体の未捕捉エラーをログに残してサーバーを維持する
+process.on('uncaughtException', (err) => {
+  console.error('[Fatal] Uncaught exception:', err);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('[Fatal] Unhandled rejection:', reason);
+});
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
