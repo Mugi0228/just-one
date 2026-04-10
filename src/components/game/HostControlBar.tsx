@@ -42,7 +42,7 @@ export function HostControlBar() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-30">
-      <div className="bg-white shadow-[0_-4px_12px_rgba(0,0,0,0.08)] rounded-t-2xl">
+      <div className="bg-white/20 backdrop-blur-md border-t border-white/30">
         <div
           className="max-w-xl mx-auto"
           style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
@@ -58,14 +58,14 @@ export function HostControlBar() {
                       key={team.teamId}
                       className={`flex items-center gap-1 rounded-full px-2.5 py-0.5 ${
                         isMyTeam
-                          ? 'bg-[var(--color-primary)] border border-[var(--color-primary)]'
-                          : 'bg-gray-50 border border-gray-100'
+                          ? 'bg-[var(--color-primary)] border border-white/30'
+                          : 'bg-white/40 border border-white/50'
                       }`}
                     >
                       <span className={`font-bold text-xs ${isMyTeam ? 'text-white/70' : 'text-gray-400'}`}>{i + 1}.</span>
                       <span className={`font-extrabold text-sm ${isMyTeam ? 'text-white' : 'text-gray-700'}`}>{team.teamName}</span>
                       <span className={`font-extrabold px-1.5 py-0.5 rounded-full text-xs ${
-                        isMyTeam ? 'bg-white/20 text-white' : 'bg-purple-100 text-[var(--color-primary)]'
+                        isMyTeam ? 'bg-white/20 text-white' : 'bg-white/50 text-[var(--color-primary)]'
                       }`}>
                         {team.totalScore}pt
                       </span>
@@ -79,14 +79,14 @@ export function HostControlBar() {
 
           {/* Host controls */}
           {showHostControls && (
-            <div className={`px-4 py-3 ${showScores ? 'border-t border-gray-100' : ''}`}>
+            <div className={`px-4 py-3 ${showScores ? 'border-t border-white/30' : ''}`}>
               <HostControls />
             </div>
           )}
 
           {/* Force reset — スコアがない場合のみ単独表示 */}
           {showForceReset && !showScores && (
-            <div className={`px-4 py-2 ${showHostControls ? 'border-t border-gray-100' : ''}`}>
+            <div className={`px-4 py-2 ${showHostControls ? 'border-t border-white/30' : ''}`}>
               <ForceResetControl />
             </div>
           )}
