@@ -36,6 +36,16 @@ export function TopicReveal() {
           <p className="text-gray-500 font-semibold">お題に合うヒントを1つ考えてください</p>
         </div>
       )}
+
+      {/* 得点ルール */}
+      <div className="w-full bg-white/60 rounded-2xl px-4 py-3 flex justify-center gap-6 text-xs font-bold">
+        <div className="flex items-center gap-1.5 text-[var(--color-success)]">
+          <span>🎯 正解</span><span className="bg-green-100 rounded-full px-2 py-0.5">+1pt</span>
+        </div>
+        <div className="flex items-center gap-1.5 text-amber-500">
+          <span>✨ 全ヒント残存</span><span className="bg-amber-100 rounded-full px-2 py-0.5">+1pt</span>
+        </div>
+      </div>
     </div>
   );
 }

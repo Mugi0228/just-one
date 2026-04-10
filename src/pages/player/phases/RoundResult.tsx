@@ -49,10 +49,15 @@ export function RoundResult() {
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <span className="font-extrabold text-white text-lg">
-                    {result.isCorrect ? '🎉 正解！' : '❌ 不正解'}
-                  </span>
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex flex-col items-end gap-0.5">
+                    <span className="font-extrabold text-white text-lg">
+                      {result.isCorrect ? '🎉 正解！' : '❌ 不正解'}
+                    </span>
+                    {result.isCorrect && result.allHintsUnique && (
+                      <span className="text-white/80 text-xs font-bold">✨ 全ヒント残存ボーナス</span>
+                    )}
+                  </div>
                   <span className="bg-white/40 text-white font-extrabold text-sm px-3 py-1 rounded-full">
                     +{result.score}pt
                   </span>

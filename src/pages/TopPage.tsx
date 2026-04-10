@@ -53,7 +53,7 @@ export function TopPage() {
 
       <div className="w-full max-w-xs">
         <RulesAccordion />
-        <p className="text-center text-gray-400 text-xs font-bold mt-2">v1.4.3</p>
+        <p className="text-center text-gray-400 text-xs font-bold mt-2">v1.4.4</p>
       </div>
     </div>
   );
@@ -373,7 +373,7 @@ function RulesAccordion() {
               { icon: '✏️', title: 'ヒントを1人1つ書く', text: 'ヒント出し役は全員、お題に関連する言葉を1つだけ書きます。他のメンバーのヒントは見えません。' },
               { icon: '🚫', title: '被ったヒントは消える', text: '同じ・または意味が似たヒントを複数人が書くと、そのヒントは自動で消えます（表記揺れも対象）。' },
               { icon: '👀', title: '残ったヒントだけ公開', text: '消えなかったヒントのみ回答者に見せます。ヒントが多く消えるほど、回答者に届く情報は少なくなります。' },
-              { icon: '🎯', title: '回答者がお題を当てる', text: '残ったヒントを見て、回答者がお題を答えます。正解すればチームに得点！不正解はチャンス消費です。' },
+              { icon: '🎯', title: '回答者がお題を当てる', text: '残ったヒントを見て、回答者がお題を答えます。正解すれば+1pt！さらに全ヒントが被らずに残っていた場合はボーナス+1ptの計2pt獲得。不正解は0ptです。' },
             ].map(({ icon, title, text }) => (
               <div key={title} className="flex gap-3">
                 <span className="text-lg shrink-0 mt-0.5">{icon}</span>
@@ -383,6 +383,22 @@ function RulesAccordion() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* 得点まとめ */}
+          <div className="bg-gray-50 rounded-xl px-3 py-3 flex flex-col gap-1.5">
+            <p className="text-gray-500 font-extrabold text-xs">🏆 得点</p>
+            <div className="flex flex-col gap-1">
+              <div className="flex justify-between text-xs font-semibold text-gray-600">
+                <span>正解</span><span className="font-extrabold text-[var(--color-primary)]">+1pt</span>
+              </div>
+              <div className="flex justify-between text-xs font-semibold text-gray-600">
+                <span>全ヒントが被らず残った（ボーナス）</span><span className="font-extrabold text-amber-500">+1pt</span>
+              </div>
+              <div className="flex justify-between text-xs font-semibold text-gray-600">
+                <span>不正解 / 未回答</span><span className="font-extrabold text-gray-400">0pt</span>
+              </div>
+            </div>
           </div>
 
           {/* コツ */}
