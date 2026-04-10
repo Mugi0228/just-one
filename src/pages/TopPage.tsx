@@ -53,7 +53,7 @@ export function TopPage() {
 
       <div className="w-full max-w-xs">
         <RulesAccordion />
-        <p className="text-center text-gray-400 text-xs font-bold mt-2">v1.4.2</p>
+        <p className="text-center text-gray-400 text-xs font-bold mt-2">v1.4.3</p>
       </div>
     </div>
   );
@@ -359,31 +359,45 @@ function RulesAccordion() {
       </button>
 
       {open && (
-        <div className="px-4 pb-4 flex flex-col gap-3 border-t border-gray-100">
-          <p className="text-gray-500 font-semibold pt-3 text-base">
-            チーム全員で協力して、回答者に「お題」を当ててもらうゲームです。
+        <div className="px-4 pb-4 flex flex-col gap-4 border-t border-gray-100">
+          {/* 概要 */}
+          <p className="text-gray-600 font-semibold pt-3 text-sm leading-relaxed">
+            チームに分かれて、各チームの「回答者」にお題の言葉を当ててもらう協力ゲームです。全チームが同じお題に挑戦し、より多く正解したチームが勝ちます。
           </p>
 
-          <div className="flex flex-col gap-2.5">
+          {/* ルール */}
+          <div className="flex flex-col gap-3">
+            <p className="text-xs font-extrabold text-gray-400 uppercase tracking-wide">ルール</p>
             {[
-              { icon: '👁️', text: 'ラウンドが始まると、回答者だけがお題を知らない状態になります。' },
-              { icon: '✏️', text: 'ヒント出し役は全員、お題に関連する言葉を1つだけ書きます。' },
-              { icon: '🚫', text: '同じ（または似た）ヒントを書いた人が複数いると、そのヒントは消えてしまいます。' },
-              { icon: '👀', text: '消えずに残ったヒントだけが回答者に公開されます。' },
-              { icon: '🎯', text: '回答者が正解すれば得点！チームで力を合わせてスコアを積み上げよう。' },
-            ].map(({ icon, text }) => (
-              <div key={icon} className="flex gap-2.5">
-                <span className="text-base shrink-0">{icon}</span>
-                <p className="text-gray-600 font-semibold leading-snug text-base">{text}</p>
+              { icon: '🙈', title: '回答者はお題を知らない', text: 'ラウンド開始時、回答者だけにお題が隠されます。他のメンバー（ヒント出し役）は全員お題を見ることができます。' },
+              { icon: '✏️', title: 'ヒントを1人1つ書く', text: 'ヒント出し役は全員、お題に関連する言葉を1つだけ書きます。他のメンバーのヒントは見えません。' },
+              { icon: '🚫', title: '被ったヒントは消える', text: '同じ・または意味が似たヒントを複数人が書くと、そのヒントは自動で消えます（表記揺れも対象）。' },
+              { icon: '👀', title: '残ったヒントだけ公開', text: '消えなかったヒントのみ回答者に見せます。ヒントが多く消えるほど、回答者に届く情報は少なくなります。' },
+              { icon: '🎯', title: '回答者がお題を当てる', text: '残ったヒントを見て、回答者がお題を答えます。正解すればチームに得点！不正解はチャンス消費です。' },
+            ].map(({ icon, title, text }) => (
+              <div key={title} className="flex gap-3">
+                <span className="text-lg shrink-0 mt-0.5">{icon}</span>
+                <div>
+                  <p className="text-gray-800 font-extrabold text-sm">{title}</p>
+                  <p className="text-gray-500 font-semibold text-xs leading-relaxed mt-0.5">{text}</p>
+                </div>
               </div>
             ))}
           </div>
 
-          <div className="bg-purple-50 rounded-xl px-3 py-2.5">
-            <p className="text-[var(--color-primary)] font-extrabold text-xs mb-1">💡 コツ</p>
-            <p className="text-gray-600 font-semibold leading-snug text-base">
-              ありきたりな言葉は被って消えやすい。かといってマニアックすぎると伝わらない。ユニークで的確なヒントを狙おう！
-            </p>
+          {/* コツ */}
+          <div className="bg-purple-50 rounded-xl px-3 py-3 flex flex-col gap-2">
+            <p className="text-[var(--color-primary)] font-extrabold text-xs">💡 勝つためのコツ</p>
+            {[
+              '「犬」→「吠える」より「犬」→「忠実」のほうが被りにくい。少しひねったヒントを狙おう。',
+              'マニアックすぎると回答者に伝わらない。ユニークさと分かりやすさのバランスが大事。',
+              'チームのメンバー構成を考えて、全員が思いつかなさそうな角度からヒントを出すと◎',
+            ].map((tip, i) => (
+              <div key={i} className="flex gap-2">
+                <span className="text-[var(--color-primary)] font-extrabold text-xs shrink-0">{i + 1}.</span>
+                <p className="text-gray-600 font-semibold text-xs leading-relaxed">{tip}</p>
+              </div>
+            ))}
           </div>
         </div>
       )}
