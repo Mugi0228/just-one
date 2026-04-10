@@ -198,6 +198,7 @@ export const registerPlayerHandlers = (
         teamId: trs.teamId,
         guesserId: trs.guesserId,
         guesserName: p?.name ?? 'Unknown',
+        doubleHintPlayerIds: [...trs.doubleHintPlayerIds],
       };
     });
 

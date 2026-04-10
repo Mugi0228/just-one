@@ -389,7 +389,7 @@ export function GameProvider({ children }: GameProviderProps) {
     });
 
     s.on('session:state-sync', (payload) => {
-      // Derive myPlayer, myTeam, myRole from sync data
+      // Derive myPlayer, myTeam, myRole, isDoubleHintPlayer from sync data
       const myPlayer = payload.players.find((p) => p.id === payload.playerId) ?? null;
       const myTeam = payload.teams.find((t) => t.memberIds.includes(payload.playerId)) ?? null;
       const myRole = myTeam
@@ -397,6 +397,8 @@ export function GameProvider({ children }: GameProviderProps) {
           ? 'GUESSER' as const
           : 'HINT_GIVER' as const)
         : null;
+      const myTeamInfo = payload.teamRoundInfos.find((t) => t.teamId === myTeam?.id);
+      const isDoubleHintPlayer = myTeamInfo?.doubleHintPlayerIds.includes(payload.playerId) ?? false;
 
       dispatch({
         type: 'STATE_SYNC',
@@ -421,6 +423,7 @@ export function GameProvider({ children }: GameProviderProps) {
           hintSubmittedCount: 0,
           hintTotalHinters: 0,
           teamRoundInfos: [...payload.teamRoundInfos],
+          isDoubleHintPlayer,
           error: null,
         },
       });
