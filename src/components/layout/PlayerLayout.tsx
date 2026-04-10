@@ -88,11 +88,11 @@ export function PlayerLayout({ children, hideHeader = false, centerContent = fal
     >
       {/* Decorative gradient blobs — 画面全体をカバーするよう配置 */}
       <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute -top-32 -left-32 w-[36rem] h-[36rem] bg-purple-400 rounded-full opacity-50 blur-[100px]" />
-        <div className="absolute top-1/4 -right-32 w-[36rem] h-[36rem] bg-cyan-300 rounded-full opacity-40 blur-[100px]" />
-        <div className="absolute top-1/3 left-1/4 w-[32rem] h-[32rem] bg-purple-300 rounded-full opacity-30 blur-[120px]" />
-        <div className="absolute bottom-10 -left-16 w-[30rem] h-[30rem] bg-pink-300 rounded-full opacity-40 blur-[100px]" />
-        <div className="absolute -bottom-24 -right-24 w-[34rem] h-[34rem] bg-purple-400 rounded-full opacity-40 blur-[100px]" />
+        <div className="absolute -top-20 -left-20 w-[40rem] h-[40rem] bg-purple-400 rounded-full opacity-60 blur-[80px]" />
+        <div className="absolute top-0 -right-20 w-[40rem] h-[40rem] bg-cyan-300 rounded-full opacity-50 blur-[80px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50rem] h-[50rem] bg-purple-300 rounded-full opacity-40 blur-[100px]" />
+        <div className="absolute bottom-0 -left-20 w-[40rem] h-[40rem] bg-pink-300 rounded-full opacity-50 blur-[80px]" />
+        <div className="absolute bottom-0 -right-20 w-[40rem] h-[40rem] bg-purple-400 rounded-full opacity-50 blur-[80px]" />
       </div>
 
       {/* セーフエリア分を内側 padding で確保。overflow-x-hidden で横はみ出しのみ防ぐ */}
@@ -111,8 +111,8 @@ export function PlayerLayout({ children, hideHeader = false, centerContent = fal
           </header>
         )}
         <ConnectionIndicator />
-        <main className="relative z-10 flex-1 flex flex-col items-center px-4 py-6 pb-8 overflow-y-auto">
-          <div className="w-full max-w-lg flex flex-col" style={{ minHeight: '100%' }}>{children}</div>
+        <main className="relative z-10 flex-1 flex flex-col items-center px-4 py-6 pb-8">
+          <div className="w-full max-w-lg flex-1 flex flex-col overflow-y-auto">{children}</div>
         </main>
       </div>
     </div>
