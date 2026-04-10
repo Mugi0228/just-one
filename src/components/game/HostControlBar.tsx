@@ -47,45 +47,46 @@ export function HostControlBar() {
           className="max-w-xl mx-auto"
           style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
         >
-          {/* Score row — always visible during game phases */}
+          {/* Score row + ロビーに戻る を1行にまとめてコンパクトに */}
           {showScores && (
-            <div className="flex flex-wrap gap-2 justify-center px-4 pt-2 pb-2">
-              {scores.map((team, i) => {
-                const isMyTeam = team.teamId === state.myTeam?.id;
-                return (
-                  <div
-                    key={team.teamId}
-                    className={`flex items-center gap-1.5 rounded-full px-3 py-1 ${
-                      isMyTeam
-                        ? 'bg-[var(--color-primary)] border border-[var(--color-primary)]'
-                        : 'bg-gray-50 border border-gray-100'
-                    }`}
-                  >
-                    <span className={`font-bold text-xs ${isMyTeam ? 'text-white/70' : 'text-gray-400'}`}>{i + 1}.</span>
-                    <span className={`font-extrabold text-sm ${isMyTeam ? 'text-white' : 'text-gray-700'}`}>{team.teamName}</span>
-                    <span className={`font-extrabold px-2 py-0.5 rounded-full text-xs ${
-                      isMyTeam ? 'bg-white/20 text-white' : 'bg-purple-100 text-[var(--color-primary)]'
-                    }`}>
-                      {team.totalScore}pt
-                    </span>
-                  </div>
-                );
-              })}
+            <div className="flex items-center gap-2 px-3 py-2">
+              <div className="flex flex-wrap gap-1.5 flex-1 justify-center">
+                {scores.map((team, i) => {
+                  const isMyTeam = team.teamId === state.myTeam?.id;
+                  return (
+                    <div
+                      key={team.teamId}
+                      className={`flex items-center gap-1 rounded-full px-2.5 py-0.5 ${
+                        isMyTeam
+                          ? 'bg-[var(--color-primary)] border border-[var(--color-primary)]'
+                          : 'bg-gray-50 border border-gray-100'
+                      }`}
+                    >
+                      <span className={`font-bold text-xs ${isMyTeam ? 'text-white/70' : 'text-gray-400'}`}>{i + 1}.</span>
+                      <span className={`font-extrabold text-sm ${isMyTeam ? 'text-white' : 'text-gray-700'}`}>{team.teamName}</span>
+                      <span className={`font-extrabold px-1.5 py-0.5 rounded-full text-xs ${
+                        isMyTeam ? 'bg-white/20 text-white' : 'bg-purple-100 text-[var(--color-primary)]'
+                      }`}>
+                        {team.totalScore}pt
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+              {showForceReset && <ForceResetControl inline />}
             </div>
           )}
 
           {/* Host controls */}
           {showHostControls && (
-            <div
-              className={`px-4 py-3 ${showScores ? 'border-t border-gray-100' : ''}`}
-            >
+            <div className={`px-4 py-3 ${showScores ? 'border-t border-gray-100' : ''}`}>
               <HostControls />
             </div>
           )}
 
-          {/* Force reset — ゲーム中いつでもロビーに戻れる */}
-          {showForceReset && (
-            <div className={`px-4 py-2 ${showScores || showHostControls ? 'border-t border-gray-100' : ''}`}>
+          {/* Force reset — スコアがない場合のみ単独表示 */}
+          {showForceReset && !showScores && (
+            <div className={`px-4 py-2 ${showHostControls ? 'border-t border-gray-100' : ''}`}>
               <ForceResetControl />
             </div>
           )}
@@ -283,7 +284,7 @@ function RoundResultControls() {
 // Force Reset Control — ゲーム中にロビーへ強制リセット
 // ---------------------------------------------------------------------------
 
-function ForceResetControl() {
+function ForceResetControl({ inline = false }: { inline?: boolean }) {
   const [confirming, setConfirming] = useState(false);
 
   function handleReset() {
@@ -293,11 +294,10 @@ function ForceResetControl() {
 
   if (confirming) {
     return (
-      <div className="flex items-center justify-center gap-2">
-        <span className="text-xs text-gray-500 font-bold">本当にリセット？</span>
+      <div className="flex items-center gap-1.5 shrink-0">
         <button
           onClick={handleReset}
-          className="text-xs font-extrabold text-white bg-red-500 rounded-full px-3 py-1"
+          className="text-xs font-extrabold text-white bg-red-500 rounded-full px-2 py-0.5"
         >
           リセット
         </button>
@@ -305,17 +305,17 @@ function ForceResetControl() {
           onClick={() => setConfirming(false)}
           className="text-xs font-bold text-gray-400"
         >
-          キャンセル
+          ✕
         </button>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center justify-center">
+    <div className={inline ? 'shrink-0' : 'flex items-center justify-center'}>
       <button
         onClick={() => setConfirming(true)}
-        className="text-xs text-gray-400 font-bold underline underline-offset-2"
+        className="text-xs text-gray-400 font-bold underline underline-offset-2 whitespace-nowrap"
       >
         ロビーに戻る
       </button>
