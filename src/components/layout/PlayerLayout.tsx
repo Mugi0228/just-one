@@ -86,33 +86,30 @@ export function PlayerLayout({ children, hideHeader = false, centerContent = fal
         backgroundImage: 'var(--bg-gradient)',
       }}
     >
-      {/* Decorative gradient blobs — 画面全体をカバーするよう配置 */}
-      <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute -top-20 -left-20 w-[40rem] h-[40rem] bg-purple-400 rounded-full opacity-60 blur-[80px]" />
-        <div className="absolute top-0 -right-20 w-[40rem] h-[40rem] bg-cyan-300 rounded-full opacity-50 blur-[80px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50rem] h-[50rem] bg-purple-300 rounded-full opacity-40 blur-[100px]" />
-        <div className="absolute bottom-0 -left-20 w-[40rem] h-[40rem] bg-pink-300 rounded-full opacity-50 blur-[80px]" />
-        <div className="absolute bottom-0 -right-20 w-[40rem] h-[40rem] bg-purple-400 rounded-full opacity-50 blur-[80px]" />
-      </div>
-
-      {/* セーフエリア分を内側 padding で確保。overflow-x-hidden で横はみ出しのみ防ぐ */}
+      {/* セーフエリア分を内側 padding で確保 */}
       <div
-        className="flex flex-col flex-1 min-h-0 overflow-x-hidden"
+        className="relative z-10 flex flex-col flex-1 min-h-0"
         style={{
           paddingTop: 'max(env(safe-area-inset-top), 0.75rem)',
           paddingBottom: 'max(env(safe-area-inset-bottom), 0.5rem)',
         }}
       >
         {!hideHeader && (
-          <header className="relative z-10 bg-white/80 backdrop-blur-sm shadow-md px-4 py-3">
+          <header className="bg-white/30 backdrop-blur-sm px-4 py-3">
             <h1 className="text-center text-2xl font-extrabold text-[var(--color-primary)]">
               Just One
             </h1>
           </header>
         )}
         <ConnectionIndicator />
-        <main className="relative z-10 flex-1 flex flex-col items-center px-4 py-6 pb-8">
-          <div className="w-full max-w-lg flex-1 flex flex-col overflow-y-auto">{children}</div>
+        {/*
+         * overflow-y-auto を main に置き、children の直接ラッパーに my-auto を使う。
+         * my-auto は overflow-y-auto flex コンテナ内で正しく動作する：
+         *  - コンテンツが収まる場合 → 上下均等マージンで中央寄せ
+         *  - コンテンツがはみ出す場合 → マージン0でトップ配置、スクロール可能
+         */}
+        <main className="flex-1 flex flex-col items-center overflow-y-auto px-4">
+          <div className="w-full max-w-lg my-auto py-6">{children}</div>
         </main>
       </div>
     </div>

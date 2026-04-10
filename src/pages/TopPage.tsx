@@ -28,7 +28,7 @@ export function TopPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center flex-1 gap-10">
+    <div className="flex flex-col items-center gap-10">
       <div className="text-center">
         <h1 className="text-6xl font-extrabold text-[var(--color-primary)] mb-3 animate-bounce-in">
           Just One
@@ -53,7 +53,7 @@ export function TopPage() {
 
       <div className="w-full max-w-xs">
         <RulesAccordion />
-        <p className="text-center text-gray-400 text-xs font-bold mt-2">v1.2.4</p>
+        <p className="text-center text-gray-400 text-xs font-bold mt-2">v1.2.5</p>
       </div>
     </div>
   );
