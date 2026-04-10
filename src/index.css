@@ -20,8 +20,9 @@
 html {
   height: -webkit-fill-available;
   overscroll-behavior: none;
-  /* ホームインジケーター領域の透過対策 — グラデーション末端の紫を設定 */
   background-color: #C4B5FD;
+  background-image: linear-gradient(160deg, #C4B5FD 0%, #BAE6FD 35%, #FBCFE8 65%, #C4B5FD 100%);
+  background-attachment: fixed;
 }
 
 body {
