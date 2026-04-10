@@ -45,11 +45,11 @@ export function HostControlBar() {
       <div className="bg-white/20 backdrop-blur-md border-t border-white/30">
         <div
           className="max-w-xl mx-auto"
-          style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
+          style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
         >
           {/* Score row + ロビーに戻る を1行にまとめてコンパクトに */}
           {showScores && (
-            <div className="flex items-center gap-2 px-3 py-2">
+            <div className="flex items-center gap-2 px-3 py-1">
               <div className="flex flex-wrap gap-1.5 flex-1 justify-center">
                 {scores.map((team, i) => {
                   const isMyTeam = team.teamId === state.myTeam?.id;
@@ -79,14 +79,14 @@ export function HostControlBar() {
 
           {/* Host controls */}
           {showHostControls && (
-            <div className={`px-4 py-3 ${showScores ? 'border-t border-white/30' : ''}`}>
+            <div className={`px-4 py-2 ${showScores ? 'border-t border-white/30' : ''}`}>
               <HostControls />
             </div>
           )}
 
           {/* Force reset — スコアがない場合のみ単独表示 */}
           {showForceReset && !showScores && (
-            <div className={`px-4 py-2 ${showHostControls ? 'border-t border-white/30' : ''}`}>
+            <div className={`px-4 py-1 ${showHostControls ? 'border-t border-white/30' : ''}`}>
               <ForceResetControl />
             </div>
           )}
