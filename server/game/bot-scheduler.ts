@@ -30,16 +30,29 @@ export const scheduleBotHints = (
     });
 
     for (const botId of botHinterIds) {
-      const delay = 5000 + Math.floor(Math.random() * 10000);
-      const handle = setTimeout(() => {
-        untrackBotTimeout(sessionCode, handle);
+      // 1つ目のヒント
+      const delay1 = 5000 + Math.floor(Math.random() * 10000);
+      const handle1 = setTimeout(() => {
+        untrackBotTimeout(sessionCode, handle1);
         const currentSession = getSession(sessionCode);
         if (!currentSession || currentSession.phase !== 'HINT_WRITING') return;
-
         const hint = generateBotHint(trs.topic);
         submitHint(io, sessionCode, botId, hint, hint);
-      }, delay);
-      trackBotTimeout(sessionCode, handle);
+      }, delay1);
+      trackBotTimeout(sessionCode, handle1);
+
+      // ダブルヒント担当ボットは2つ目も提出
+      if (trs.doubleHintPlayerIds.includes(botId)) {
+        const delay2 = delay1 + 2000 + Math.floor(Math.random() * 3000);
+        const handle2 = setTimeout(() => {
+          untrackBotTimeout(sessionCode, handle2);
+          const currentSession = getSession(sessionCode);
+          if (!currentSession || currentSession.phase !== 'HINT_WRITING') return;
+          const hint2 = generateBotHint(trs.topic);
+          submitHint(io, sessionCode, botId, hint2, hint2);
+        }, delay2);
+        trackBotTimeout(sessionCode, handle2);
+      }
     }
   }
 };

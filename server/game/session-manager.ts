@@ -8,6 +8,8 @@ import { cancelBotTimeouts } from './bot-timeout-registry.js';
 export interface TeamRoundState {
   readonly teamId: string;
   readonly guesserId: string;
+  /** 人数差補填のため2つ目のヒントを提出するプレイヤーのID */
+  readonly doubleHintPlayerIds: readonly string[];
   readonly topic: string;
   readonly hints: readonly Omit<Hint, 'isDuplicate'>[];
   readonly checkedHints: readonly Hint[];

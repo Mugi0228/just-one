@@ -57,6 +57,8 @@ export interface TeamRoundInfo {
   readonly teamId: string;
   readonly guesserId: string;
   readonly guesserName: string;
+  /** 人数差補填のため2つ目のヒントを提出するプレイヤーのID */
+  readonly doubleHintPlayerIds: readonly string[];
 }
 
 /** チームのラウンド結果 */

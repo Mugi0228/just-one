@@ -46,6 +46,7 @@ export interface GameState {
   readonly hintSubmittedCount: number;
   readonly hintTotalHinters: number;
   readonly teamRoundInfos: readonly TeamRoundInfo[];
+  readonly isDoubleHintPlayer: boolean;
   readonly error: string | null;
 }
 
@@ -70,6 +71,7 @@ const initialState: GameState = {
   hintSubmittedCount: 0,
   hintTotalHinters: 0,
   teamRoundInfos: [],
+  isDoubleHintPlayer: false,
   error: null,
 };
 
@@ -179,11 +181,9 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     case 'ROUND_START': {
       const pid = state.myPlayerId ?? state.myPlayer?.id;
       const myTeam = deriveMyTeam(state.teams, pid);
-      const myRole = deriveMyRole(
-        action.teams,
-        myTeam?.id ?? null,
-        pid,
-      );
+      const myRole = deriveMyRole(action.teams, myTeam?.id ?? null, pid);
+      const myTeamInfo = action.teams.find((t) => t.teamId === myTeam?.id);
+      const isDoubleHintPlayer = pid ? (myTeamInfo?.doubleHintPlayerIds.includes(pid) ?? false) : false;
       return {
         ...state,
         currentRound: action.round,
@@ -194,6 +194,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         hints: [],
         hintSubmittedCount: 0,
         hintTotalHinters: 0,
+        isDoubleHintPlayer,
       };
     }
 

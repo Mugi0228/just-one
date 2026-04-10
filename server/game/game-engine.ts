@@ -141,14 +141,29 @@ export const startRound = (io: AppServer, sessionCode: string): void => {
 
   // 各チームのラウンド状態を構築
   const newGuesserRotation = new Map(session.guesserRotation);
+
+  // 最大チーム人数（ヒント数の公平基準）
+  const maxTeamSize = Math.max(...session.teams.map((t) => t.memberIds.length));
+
   const teamRoundStates: TeamRoundState[] = session.teams.map((team) => {
     const currentIndex = newGuesserRotation.get(team.id) ?? 0;
     const guesserId = team.memberIds[currentIndex % team.memberIds.length];
     newGuesserRotation.set(team.id, currentIndex + 1);
 
+    // 人数差の分だけ追加ヒントが必要なプレイヤーをランダム選出
+    const hinters = [...team.memberIds.filter((id) => id !== guesserId)];
+    const extraNeeded = Math.max(0, maxTeamSize - team.memberIds.length);
+    // Fisher-Yates shuffle してから先頭 extraNeeded 件を採用
+    for (let i = hinters.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [hinters[i], hinters[j]] = [hinters[j], hinters[i]];
+    }
+    const doubleHintPlayerIds = hinters.slice(0, extraNeeded);
+
     return {
       teamId: team.id,
       guesserId,
+      doubleHintPlayerIds,
       topic: sharedTopic,
       hints: [],
       checkedHints: [],
@@ -172,6 +187,7 @@ export const startRound = (io: AppServer, sessionCode: string): void => {
       teamId: trs.teamId,
       guesserId: trs.guesserId,
       guesserName: player?.name ?? 'Unknown',
+      doubleHintPlayerIds: [...trs.doubleHintPlayerIds],
     };
   });
 
@@ -269,8 +285,11 @@ export const submitHint = (
   // 回答者はヒントを出せない
   if (teamRound.guesserId === playerId) return;
 
-  // 既に提出済みかチェック
-  if (teamRound.hints.some((h) => h.playerId === playerId)) return;
+  // 提出済み件数チェック（ダブルヒント担当者は2回まで、それ以外は1回まで）
+  const playerHintCount = teamRound.hints.filter((h) => h.playerId === playerId).length;
+  const isDoubleHintPlayer = teamRound.doubleHintPlayerIds.includes(playerId);
+  const maxAllowed = isDoubleHintPlayer ? 2 : 1;
+  if (playerHintCount >= maxAllowed) return;
 
   const newHint = { playerId, text: hintText, rawText };
 
@@ -286,6 +305,7 @@ export const submitHint = (
   // ヒント提出通知（チーム全員に）
   const team = session.teams[teamIndex];
   const totalHinters = team.memberIds.length - 1; // 回答者を除く
+  const totalExpected = totalHinters + teamRound.doubleHintPlayerIds.length;
   const submittedCount = teamRound.hints.length + 1;
 
   for (const memberId of team.memberIds) {
@@ -295,7 +315,7 @@ export const submitHint = (
     io.to(getSocketIdByPlayerId(memberId)).emit('game:hint-submitted', {
       playerId,
       submittedCount,
-      totalHinters,
+      totalHinters: totalExpected,
     });
   }
 
@@ -314,7 +334,8 @@ const allHintsSubmitted = (session: GameSession): boolean =>
     const team = session.teams.find((t) => t.id === trs.teamId);
     if (!team) return false;
     const totalHinters = team.memberIds.length - 1;
-    return trs.hints.length >= totalHinters;
+    const totalExpected = totalHinters + trs.doubleHintPlayerIds.length;
+    return trs.hints.length >= totalExpected;
   });
 
 /**
