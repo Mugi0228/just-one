@@ -12,7 +12,7 @@ const shuffleArray = <T>(arr: readonly T[]): T[] => {
   return result;
 };
 
-const TEAM_NAMES = ['チームA', 'チームB', 'チームC', 'チームD', 'チームE', 'チームF'] as const;
+const TEAM_NAMES = ['チームA', 'チームB', 'チームC', 'チームD', 'チームE', 'チームF', 'チームG'] as const;
 
 /**
  * プレイヤーIDリストをランダムにシャッフルし、指定数のチームに均等分配する。

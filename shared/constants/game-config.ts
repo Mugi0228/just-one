@@ -1,8 +1,8 @@
 export const GAME_CONFIG = {
   /** ラウンド数 */
   TOTAL_ROUNDS: 7,
-  /** チーム最大数 */
-  MAX_TEAM_COUNT: 4,
+  /** 1チームのデフォルト人数（チーム数の基準） */
+  DEFAULT_TEAM_SIZE: 4,
   /** 1チームの最小人数（回答者1人 + ヒント出し2人） */
   MIN_TEAM_SIZE: 3,
   /** チーム最大人数 */

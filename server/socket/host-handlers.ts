@@ -262,14 +262,11 @@ export const registerHostHandlers = (
       return;
     }
 
-    // チーム数を人数に応じて動的に計算（1チーム最低3人）
+    // チーム数を人数に応じて動的に計算（1チーム4人基準で四捨五入）
     const playerIds = session.players.map((p) => p.id);
     const teamCount = Math.max(
       1,
-      Math.min(
-        GAME_CONFIG.MAX_TEAM_COUNT,
-        Math.floor(playerIds.length / GAME_CONFIG.MIN_TEAM_SIZE),
-      ),
+      Math.round(playerIds.length / GAME_CONFIG.DEFAULT_TEAM_SIZE),
     );
     const teams = assignTeams(playerIds, teamCount);
 
