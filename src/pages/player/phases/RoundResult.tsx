@@ -101,7 +101,7 @@ export function RoundResult() {
                                 : 'bg-purple-100 text-[var(--color-primary)]'}
                           `}
                         >
-                          {hint.duplicateReason === 'synonym' ? '🔀 ' : hint.duplicateReason === 'topic' ? '🚫 ' : hint.duplicateReason === 'not-word' ? '📝 ' : ''}{hint.text}
+                          {hint.duplicateReason === 'synonym' ? '🔀 ' : hint.duplicateReason === 'topic' ? '🚫 ' : hint.duplicateReason === 'not-word' ? '🚫 ' : ''}{hint.text}
                         </span>
                       ))}
                     </div>

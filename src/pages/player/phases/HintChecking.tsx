@@ -93,7 +93,7 @@ export function HintChecking() {
               </span>
             ) : hint.isDuplicate && hint.duplicateReason === 'not-word' ? (
               <span className="flex items-center gap-1 text-gray-400 text-xs font-extrabold">
-                🚫 <span>単語NG</span>
+                🚫 <span>文章NG</span>
               </span>
             ) : hint.isDuplicate && hint.duplicateReason === 'topic' ? (
               <span className="flex items-center gap-1 text-red-500 text-xs font-extrabold">
