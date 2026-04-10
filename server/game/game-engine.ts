@@ -358,7 +358,7 @@ const finishHintWriting = async (io: AppServer, sessionCode: string): Promise<vo
     // 完全一致チェック（同期）
     const exactCheckedStates = session.teamRoundStates.map((trs) => ({
       ...trs,
-      checkedHints: checkDuplicateHints(trs.hints),
+      checkedHints: checkDuplicateHints(trs.hints, trs.topic),
     }));
 
     // 同義語チェック（async、チームごとに並列実行）

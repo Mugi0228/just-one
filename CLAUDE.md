@@ -51,6 +51,7 @@ shared/        Types shared between client and server
 - **Socket events:** All event names and payloads typed in `shared/types/events.ts`. Add new events there first.
 - **TypeScript strict mode** is enabled; avoid `any`.
 - **PWA:** `vite-plugin-pwa` (generateSW mode). App shell cached; Socket.io excluded from SW. Icons in `public/`.
+- **iOS PWA レイアウト:** `PlayerLayout` は `position: fixed; inset: 0` で全画面を確実にカバー。`window.innerHeight` は iOS バージョンによってセーフエリアの扱いが異なるため JS 高さ計算は使用しない。セーフエリアは内側ラッパーの `padding: env(safe-area-inset-*)` で管理。blob（グラデーション装飾）は `fixed inset-0` を維持すること（`overflow: hidden` を持つ親の中でも `fixed` 子要素は viewport 基準で描画される）。
 
 ## Known Issues
 
