@@ -95,6 +95,10 @@ export function HintChecking() {
               <span className="flex items-center gap-1 text-gray-400 text-xs font-extrabold">
                 🚫 <span>単語NG</span>
               </span>
+            ) : hint.isDuplicate && hint.duplicateReason === 'topic' ? (
+              <span className="flex items-center gap-1 text-red-500 text-xs font-extrabold">
+                🚫 <span>お題と同じ</span>
+              </span>
             ) : hint.isDuplicate ? (
               <span className="text-lg">❌</span>
             ) : (
