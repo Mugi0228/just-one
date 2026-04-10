@@ -81,7 +81,7 @@ export function PlayerLayout({ children, hideHeader = false, centerContent = fal
      */
     <div
       className="fixed inset-0 flex flex-col"
-      style={{ background: 'linear-gradient(135deg, #a78bfa 0%, #60a5fa 40%, #f9a8d4 75%, #a78bfa 100%)' }}
+      style={{ background: 'linear-gradient(to bottom, #93c5fd 0%, #c4b5fd 45%, #f9a8d4 75%, #a78bfa 100%)' }}
     >
       {/* セーフエリア分を内側 padding で確保 */}
       <div
