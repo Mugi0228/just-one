@@ -79,7 +79,10 @@ export function PlayerLayout({ children, hideHeader = false, centerContent = fal
      * - blobs は fixed inset-0 のまま: 親が fixed でも子の fixed は viewport 基準で描画される
      * - セーフエリアは内側 wrapper の padding で管理
      */
-    <div className="fixed inset-0 flex flex-col">
+    <div
+      className="fixed inset-0 flex flex-col"
+      style={{ background: 'linear-gradient(135deg, #a78bfa 0%, #60a5fa 40%, #f9a8d4 75%, #a78bfa 100%)' }}
+    >
       {/* セーフエリア分を内側 padding で確保 */}
       <div
         className="relative z-10 flex flex-col flex-1 min-h-0"
